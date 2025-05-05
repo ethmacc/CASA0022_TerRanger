@@ -46,6 +46,7 @@ void setup() {
      The name can be changed but maybe be truncated based on space left in advertisement packet
   */
   BLE.setLocalName("BatteryMonitor");
+  BLE.setDeviceName("BatteryMonitor");
   BLE.setAdvertisedService(batteryService); // add the service UUID
   batteryService.addCharacteristic(batteryLevelChar); // add the battery level characteristic
   BLE.addService(batteryService); // Add the battery service
@@ -101,6 +102,7 @@ void updateBatteryLevel() {
     Serial.print("Battery Level % is now: "); // print it
     Serial.println(batteryLevel);
     batteryLevelChar.writeValue(batteryLevel);  // and update the battery level characteristic
+    
     oldBatteryLevel = batteryLevel;           // save the level for next comparison
   }
 }
