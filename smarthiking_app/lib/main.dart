@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onScanUpdate(DiscoveredDevice d) {
-    if (d.name == 'BatteryMonitor' && !_found) {
+    if (d.name == 'SH_v1' && !_found) {
       _found = true;
       print("Found device");
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
@@ -97,12 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onConnected(String deviceId) {
     final characteristic = QualifiedCharacteristic(
         deviceId: deviceId,
-        serviceId: Uuid.parse('180F'),
-        characteristicId: Uuid.parse('2A19'));
+        serviceId: Uuid.parse('185B'),
+        characteristicId: Uuid.parse('2C0A'));
 
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
       setState(() {
-        _value = const Utf8Decoder().convert(bytes);
+        //_value = const Utf8Decoder().convert(bytes);
+        print(bytes);
       });
     });
   }
@@ -149,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text("Scanning for device")
           ]
           : <Widget>[
-            const Text('Battery value:'),
+            const Text('ToF values:'),
             Text(
               '$_value',
               style: Theme.of(context).textTheme.headlineMedium,
