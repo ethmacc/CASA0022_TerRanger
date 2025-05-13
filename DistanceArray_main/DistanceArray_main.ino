@@ -18,7 +18,7 @@ int imageWidth = 0; //Used to pretty print output
 int buttonState = 0;
 
 // Bluetooth® Low Energy Service
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 64
 BLEService tofService = BLEService("185B");
 BLECharacteristic tofChar = BLECharacteristic("2C0A", BLERead | BLENotify, BUFFER_SIZE, false); 
 
@@ -88,10 +88,10 @@ void loop()
           Serial.println("ToF cam2");
           updateDistance(2);
 
-          uint16_t * all_data = new uint16_t[128];
-          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + 64, all_data);
-          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + 64, all_data + 64);
-          tofChar.writeValue(all_data, 256);
+          uint16_t * all_data = new uint16_t[32];
+          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + 16, all_data);
+          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + 16, all_data + 16);
+          tofChar.writeValue(all_data, 64);
           pressTime = millis();
         }
     }
@@ -175,7 +175,10 @@ void initialiseToF (int cam) {
         while (1);
       }
       tof_1.setAddress(0x50);
-      tof_1.setResolution(8*8);//Enable all 64 pads
+      tof_1.setResolution(4*4); //Enable only 16 pads for max ambient resilience
+      tof_1.setSharpenerPercent(20); //increase sharpener slightly to reduce veiling glare
+      tof_1.setRangingMode(SF_VL53L5CX_RANGING_MODE::CONTINUOUS);
+      tof_1.setRangingFrequency(15); // increase ranging frequency to 15Hz to reduce lag
       tof_1.startRanging();
       break;
     case 2:
@@ -188,7 +191,10 @@ void initialiseToF (int cam) {
         while (1);
       }
       tof_2.setAddress(0x51);
-      tof_2.setResolution(8*8);//Enable all 64 pads
+      tof_2.setResolution(4*4); //Enable only 16 pads for max ambient resilience
+      tof_2.setSharpenerPercent(20);
+      tof_2.setRangingMode(SF_VL53L5CX_RANGING_MODE::CONTINUOUS);
+      tof_2.setRangingFrequency(15); // increase ranging frequency to 15Hz to reduce lag
       tof_2.startRanging();
       break;
   }
