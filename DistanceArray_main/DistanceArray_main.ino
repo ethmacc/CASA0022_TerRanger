@@ -8,6 +8,10 @@ SparkFun_VL53L5CX tof_2;
 VL53L5CX_ResultsData measurementData_1; // Result data class structure, 1356 byes of RAM
 VL53L5CX_ResultsData measurementData_2;
 
+uint8_t percent = 30; // Set sharpening percentage
+uint8_t freq = 15; // Set ranging frequency
+uint8_t res = 8*8; // Set sensor resolution
+
 int imageResolution = 0; //Used to pretty print output
 int imageWidth = 0; //Used to pretty print output
 
@@ -18,7 +22,7 @@ int imageWidth = 0; //Used to pretty print output
 int buttonState = 0;
 
 // Bluetooth® Low Energy Service
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE res * 2 * 2 // Buffer size is resolution x 2 sensors x 2 bytes
 BLEService tofService = BLEService("185B");
 BLECharacteristic tofChar = BLECharacteristic("2C0A", BLERead | BLENotify, BUFFER_SIZE, false); 
 
@@ -88,10 +92,10 @@ void loop()
           Serial.println("ToF cam2");
           updateDistance(2);
 
-          uint16_t * all_data = new uint16_t[32];
-          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + 16, all_data);
-          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + 16, all_data + 16);
-          tofChar.writeValue(all_data, 64);
+          uint16_t * all_data = new uint16_t[res * 2];
+          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + res, all_data);
+          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + res, all_data + res);
+          tofChar.writeValue(all_data, BUFFER_SIZE);
           pressTime = millis();
         }
     }
@@ -163,7 +167,6 @@ void updateDistance(int cam) {
 }
 
 void initialiseToF (int cam) {
-  unsigned long target_address;
   switch (cam) {
     case 1:
       digitalWrite(LPn_1, HIGH);
@@ -175,10 +178,10 @@ void initialiseToF (int cam) {
         while (1);
       }
       tof_1.setAddress(0x50);
-      tof_1.setResolution(4*4); //Enable only 16 pads for max ambient resilience
-      tof_1.setSharpenerPercent(20); //increase sharpener slightly to reduce veiling glare
+      tof_1.setResolution(res); 
+      tof_1.setSharpenerPercent(percent); //increase sharpener slightly to reduce veiling glare
       tof_1.setRangingMode(SF_VL53L5CX_RANGING_MODE::CONTINUOUS);
-      tof_1.setRangingFrequency(15); // increase ranging frequency to 15Hz to reduce lag
+      tof_1.setRangingFrequency(freq); // increase ranging frequency to 15Hz to reduce lag
       tof_1.startRanging();
       break;
     case 2:
@@ -191,10 +194,10 @@ void initialiseToF (int cam) {
         while (1);
       }
       tof_2.setAddress(0x51);
-      tof_2.setResolution(4*4); //Enable only 16 pads for max ambient resilience
-      tof_2.setSharpenerPercent(20);
+      tof_2.setResolution(res); 
+      tof_2.setSharpenerPercent(percent);
       tof_2.setRangingMode(SF_VL53L5CX_RANGING_MODE::CONTINUOUS);
-      tof_2.setRangingFrequency(15); // increase ranging frequency to 15Hz to reduce lag
+      tof_2.setRangingFrequency(freq); // increase ranging frequency to 15Hz to reduce lag
       tof_2.startRanging();
       break;
   }
