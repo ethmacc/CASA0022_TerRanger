@@ -1,79 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'dart:async';
+import 'package:smarthiking_app/screens/scan.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _ble = FlutterReactiveBle();
-
-  StreamSubscription<DiscoveredDevice>? _scanSub;
-  StreamSubscription<ConnectionStateUpdate>? _connectSub;
-  StreamSubscription<List<int>>? _notifySub;
-
-  var _found = false;
-  var _value = '';
-
-  @override
-  initState() {
-    super.initState();
-    checkPermissions();
-    _scanSub = _ble.scanForDevices(withServices: []).listen(_onScanUpdate);
-  }
-
-  @override
-  void dispose() {
-    _notifySub?.cancel();
-    _connectSub?.cancel();
-    _scanSub?.cancel();
-    super.dispose();
-  }
-
-  void checkPermissions() async {
-    PermissionStatus locationPermission = await Permission.location.request();
-    PermissionStatus bleScan = await Permission.bluetoothScan.request();
-    PermissionStatus bleConnect = await Permission.bluetoothConnect.request();
-    debugPrint('$locationPermission');
-    debugPrint('$bleScan');
-    debugPrint('$bleConnect');
-  }
-
-  void _onScanUpdate(DiscoveredDevice d) {
-    if (d.name == 'SH_v1' && !_found) {
-      _found = true;
-      debugPrint("Found device");
-      _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
-        if (update.connectionState == DeviceConnectionState.connected) {
-          _onConnected(d.id);
-        }
-      });
-    } else {
-      debugPrint("Found device ${d.name} instead!");
-    }
-  }
-
-  void _onConnected(String deviceId) {
-    final characteristic = QualifiedCharacteristic(
-        deviceId: deviceId,
-        serviceId: Uuid.parse('185B'),
-        characteristicId: Uuid.parse('2C0A'));
-
-    _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
-      setState(() {
-        //_value = const Utf8Decoder().convert(bytes);
-        debugPrint('$bytes');
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -90,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('Home'),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -110,20 +45,16 @@ class _MyHomePageState extends State<MyHomePage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: !_found ? 
-          <Widget>[
-            const CircularProgressIndicator(),
-            const Text("Scanning for device")
-          ]
-          : <Widget>[
-            const Text('ToF values:'),
-            Text(
-              '$_value',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          children: <Widget>[
+            TextButton(onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ScanPage())
+              );
+            }, child: Text('Press to connect'),),
           ],
         ),
       ),
     );
   }
-}
+} 
