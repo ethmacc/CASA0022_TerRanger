@@ -17,6 +17,13 @@ class _HomePageState extends State<HomePage> {
         title: Text('Home'),
       ),
       bottomNavigationBar: BottomNavbar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          //TODO: add new hike function
+        },
+        child: Icon(Icons.add)
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

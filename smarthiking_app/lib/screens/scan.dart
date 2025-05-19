@@ -43,6 +43,13 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavbar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          //TODO: add new hike function
+        },
+        child: Icon(Icons.add)
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Connection Manager'),
