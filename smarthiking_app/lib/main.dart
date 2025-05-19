@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:smarthiking_app/screens/home.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
+import 'package:smarthiking_app/models/current_page.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ConnManager())
+        ChangeNotifierProvider(create: (context) => ConnManager()),
+        ChangeNotifierProvider(create: (context) => CurrentPage())
       ],
       child: const App()),
     );

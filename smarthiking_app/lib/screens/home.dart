@@ -16,11 +16,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Home'),
       ),
-      bottomNavigationBar: bottomNavbar,
+      bottomNavigationBar: BottomNavbar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text('No hikes logged yet')
           ],
         ),
       ),

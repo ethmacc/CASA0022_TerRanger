@@ -34,6 +34,7 @@ class ConnManager extends ChangeNotifier {
     _connectSub?.cancel();
     _scanSub?.cancel();
     connected = false;
+    scanning = false;
     notifyListeners();
   }
 

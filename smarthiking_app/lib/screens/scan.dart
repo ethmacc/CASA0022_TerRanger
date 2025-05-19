@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
+import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -22,7 +23,9 @@ class _ScanPageState extends State<ScanPage> {
   @override
   void dispose() {
     if (!connManager.isConnected) { 
-      connManager.disconnect(); //If device not connected, abort and cancel all subscriptions
+      setState(() {
+        connManager.disconnect(); //If device not connected, abort and cancel all subscriptions
+      });
     }
     super.dispose();
   }
@@ -39,6 +42,7 @@ class _ScanPageState extends State<ScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavbar(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Connection Manager'),
@@ -50,6 +54,13 @@ class _ScanPageState extends State<ScanPage> {
           <Widget>[
             const CircularProgressIndicator(),
             const Text("Scanning for device"),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  connManager.disconnect(); //Get out of jail card, in case dispose doesn't work for whatever reason
+                });
+              }, 
+              child: Text('Cancel'))
           ]:
           <Widget>[
             TextButton(
