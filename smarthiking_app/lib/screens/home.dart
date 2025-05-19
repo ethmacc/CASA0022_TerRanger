@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => const ScanPage())
               );
-            }, child: Text('Press to connect'),),
+            }, child: Text('Manage connections'),),
           ],
         ),
       ),

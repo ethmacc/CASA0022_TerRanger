@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,26 +21,22 @@ class _ScanPageState extends State<ScanPage> {
   StreamSubscription<ConnectionStateUpdate>? _connectSub;
   StreamSubscription<List<int>>? _notifySub;
 
-  var _found = false;
-  var _value = '';
+  var _connected = false;
+  var _scanning = false;
+  List<int> decoded = List.empty(growable: true); 
 
   @override
   initState() {
     super.initState();
-    checkPermissions();
-    _ble.scanForDevices(withServices: []).listen(
-      _onScanUpdate,
-      onError: (e) {
-        debugPrint('${e.name}');
-      }
-    );
   }
 
   @override
   void dispose() {
-    _notifySub?.cancel();
-    _connectSub?.cancel();
-    _scanSub?.cancel();
+    if (!_connected) {
+      _notifySub?.cancel();
+      _connectSub?.cancel();
+      _scanSub?.cancel();
+    }
     super.dispose();
   }
 
@@ -54,32 +50,38 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   void _onScanUpdate(DiscoveredDevice d) {
-    if (d.name == 'SH_v1' && !_found) {
+    if (d.name == 'SH_v1' && !_connected) {
       setState(() {
-        _found = true;
+        _connected = true;
+        _scanning = false;
       });
       debugPrint("Found device");
+      _scanSub?.cancel();
       _connectSub = _ble.connectToDevice(id: d.id).listen((update) {
         if (update.connectionState == DeviceConnectionState.connected) {
           _onConnected(d.id);
-          _scanSub?.cancel();
         }
       });
     }
   }
 
   void _onConnected(String deviceId) {
+    _ble.requestMtu(deviceId: deviceId, mtu: 512);
+
     final characteristic = QualifiedCharacteristic(
         deviceId: deviceId,
         serviceId: Uuid.parse('185B'),
         characteristicId: Uuid.parse('2C0A'));
 
     _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
-      setState(() {
-        //_value = const Utf8Decoder().convert(bytes);
-        debugPrint('$bytes');
-        //debugPrint('$_value');
-      });
+        decoded.clear();
+        ByteData byteData = ByteData.sublistView(Uint8List.fromList(bytes));
+        for (var i= 0; i < bytes.length;i += 2) {
+          int decodedInt = byteData.getUint16(i, Endian.little);
+          decoded.add(decodedInt);
+        }
+        debugPrint('Data: $bytes');
+        debugPrint('Decoded: $decoded');
     });
   }
 
@@ -119,36 +121,34 @@ class _ScanPageState extends State<ScanPage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: !_found ? 
+          children: _scanning ? 
           <Widget>[
             const CircularProgressIndicator(),
             const Text("Scanning for device"),
+          ]:
+          <Widget>[
             TextButton(
-              onPressed: () {
+              onPressed: _connected ? () {
                 _notifySub?.cancel();
                 _connectSub?.cancel();
                 _scanSub?.cancel();
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage())
+                setState(() {
+                  _connected = false;
+                });
+              }:
+              () {
+                checkPermissions();
+                setState(() {
+                  _scanning = true;
+                });
+                _scanSub = _ble.scanForDevices(withServices: []).listen(
+                  _onScanUpdate,
+                  onError: (e) {
+                    debugPrint('${e.name}');
+                  }
                 );
               },
-              child: const Text('Abort and return to home'),
-            ),
-          ]
-          : <Widget>[
-            const Text('Connected to walking stick'),
-            TextButton(
-              onPressed: () {
-                _notifySub?.cancel();
-                _connectSub?.cancel();
-                _scanSub?.cancel();
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage())
-                );
-              },
-              child: const Text('Disconnect and return to home'),
+              child: _connected ? const Text('Disconnect from device') : const Text ('Connect to device'),
             ),
           ],
         ),
