@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
+import 'package:smarthiking_app/screens/enter_hike.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +20,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavbar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //TODO: add new hike function
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EnterHike())
+            );
         },
         child: Icon(Icons.add)
       ),
