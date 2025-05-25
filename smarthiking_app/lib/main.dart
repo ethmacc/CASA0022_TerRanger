@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:smarthiking_app/screens/home.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
@@ -9,7 +10,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ConnManager()),
-        ChangeNotifierProvider(create: (context) => CurrentPage())
+        ChangeNotifierProvider(create: (context) => CurrentPage()),
+        ChangeNotifierProvider(create: (context) => ActiveHike())
       ],
       child: const App()),
     );

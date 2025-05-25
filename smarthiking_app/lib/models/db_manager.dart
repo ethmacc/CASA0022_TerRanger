@@ -78,6 +78,14 @@ Future<int> getLatestID (String tableName) async {
   }
 }
 
+Future<List<Map>> getHikeByID (int id) async {
+  //Get reference to db
+  final db = await openHikingDataBase();
+
+  List<Map> maps = await db.rawQuery("SELECT * FROM hikes WHERE id = $id");
+  return maps;
+}
+
 Future<List<Map>> getAllData (String tableName) async {
   //Get reference to db
   final db = await openHikingDataBase();
@@ -87,8 +95,8 @@ Future<List<Map>> getAllData (String tableName) async {
 }
 
 void devOnly () async {
+  //Dev only function for manipulating the database
   final db = await openHikingDataBase();
-  //db.rawDelete("DROP TABLE IF EXISTS hikes");
   return db.execute(
         'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, distance INTEGER, elevation INTEGER, date TEXT)'
       );

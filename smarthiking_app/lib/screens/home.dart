@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
+import 'package:smarthiking_app/screens/hike_detail.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -21,27 +22,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _showDeleteDialog(int index) async {
+    Future<void> showDeleteDialog(int index, String hikeName) async {
+      String confirmName = '';
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Warning!'),
-            content: const SingleChildScrollView(
+            content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
                   Text('This action cannot be undone. Are you sure you wish to proceed with deleting this hike?'),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Type '$hikeName' to confirm",
+                              ),
+                              onChanged: (value) => confirmName = value,
+                              )
+                  ),
                 ],
               ),
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  setState(() {
-                    deleteHike(index);
-                  });
-                  Navigator.of(context).pop();
+                  if (confirmName == hikeName) {
+                    
+                    setState(() {
+                      deleteHike(index);
+                    });
+                    Navigator.of(context).pop();
+                  } else {
+                    debugPrint('$confirmName, $hikeName');
+                  }
                 },
                 style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(Colors.redAccent),
@@ -57,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
                     foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
                     ),
-                child: const Text('No'),
+                child: const Text('Cancel'),
               ),
             ],
           );
@@ -102,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                               switch (selected) {
                                 case 0:
                                   debugPrint('${hikeMap.data?[index]['id']}');
-                                  _showDeleteDialog(hikeMap.data?[index]['id']); 
+                                  showDeleteDialog(hikeMap.data?[index]['id'], hikeMap.data?[index]['name']); 
                               }
                             },
                             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
@@ -135,7 +152,10 @@ class _HomePageState extends State<HomePage> {
                           title: Text('Max elevation ${hikeMap.data?[index]['elevation']} ft'),
                         ),
                         TextButton(onPressed: () {
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HikeDetail(hikeID:  hikeMap.data?[index]['id']))
+                          );
                         }, child: Text('See details >'))
                       ],
                     )

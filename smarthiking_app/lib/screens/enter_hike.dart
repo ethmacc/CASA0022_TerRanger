@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
-import 'package:smarthiking_app/screens/home.dart';
+import 'package:smarthiking_app/screens/hike_detail.dart';
+import 'package:smarthiking_app/models/active_hike.dart';
+import 'package:provider/provider.dart';
 
 class EnterHike extends StatefulWidget {
   const EnterHike({super.key});
@@ -12,6 +14,8 @@ class EnterHike extends StatefulWidget {
 class _EnterHikeState extends State<EnterHike> {
   @override
   Widget build(BuildContext context) {
+    ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -31,15 +35,16 @@ class _EnterHikeState extends State<EnterHike> {
                         ),
                         onSubmitted: (value) async {
                           //Create new db entry on submit and navigator push to trip data screen
-                          var newId = await getLatestID('hikes');
+                          int newId = await getLatestID('hikes');
                           debugPrint('$newId');
                           String date = DateTime.now().toString();
                           insertHike(
                             Hike(id:newId, name:value, distance:0, elevation: 0, date: date)
                           );
+                          activeHike.activateHike(newId);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const HomePage(title: 'Home',))
+                            MaterialPageRoute(builder: (context) => HikeDetail(hikeID: newId))
                           );
                         },
                       )
