@@ -10,7 +10,7 @@ VL53L5CX_ResultsData measurementData_2;
 
 uint8_t percent = 30; // Set sharpening percentage
 uint8_t freq = 15; // Set ranging frequency
-uint8_t res = 8*8; // Set sensor resolution
+uint8_t res = 4*4; // Set sensor resolution
 
 int imageResolution = 0; //Used to pretty print output
 int imageWidth = 0; //Used to pretty print output

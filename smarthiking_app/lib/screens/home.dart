@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
+import 'package:smarthiking_app/models/db_manager.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.title});
+  final String title;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -11,11 +15,60 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Future<void> _showDeleteDialog(int index) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Warning!'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('This action cannot be undone. Are you sure you wish to proceed with deleting this hike?'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    deleteHike(index);
+                  });
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll<Color>(Colors.redAccent),
+                    foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
+                    ),
+                child: const Text('Yes'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
+                    foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
+                    ),
+                child: const Text('No'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Home'),
+        title: Text(widget.title),
       ),
       bottomNavigationBar: BottomNavbar(),
       floatingActionButton: FloatingActionButton(
@@ -28,14 +81,78 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.add)
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('No hikes logged yet')
-          ],
-        ),
-      ),
+      body: Center(child: FutureBuilder(
+        future: getAllData('hikes'),
+        builder: (context, hikeMap) {
+          if (hikeMap.data!.isNotEmpty) {
+            return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: hikeMap.data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child:Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.hiking),
+                          title: Text(hikeMap.data?[index]['name']),
+                          subtitle: Text('Date: ${hikeMap.data?[index]['date']}'),
+                          trailing: PopupMenuButton<int>(
+                            onSelected: (int selected) {
+                              switch (selected) {
+                                case 0:
+                                  debugPrint('${hikeMap.data?[index]['id']}');
+                                  _showDeleteDialog(hikeMap.data?[index]['id']); 
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                              const PopupMenuItem(value: 0, child: Text('Delete this hike'))
+                            ],
+                            icon: Icon(Icons.more_vert)),
+                        ),
+                        SizedBox(
+                          height: 300,
+                          child: FlutterMap(
+                            options: MapOptions(
+                              initialCenter: LatLng(51.5072, 0.1276),
+                              initialZoom: 9.0,
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              ),
+                              RichAttributionWidget(attributions: [
+                                TextSourceAttribution('OpenStreetMap contributors')
+                              ])
+                            ],
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.route),
+                          title: Text('${hikeMap.data?[index]['distance']} km travelled'),
+                        ),ListTile(
+                          leading: Icon(Icons.terrain),
+                          title: Text('Max elevation ${hikeMap.data?[index]['elevation']} ft'),
+                        ),
+                        TextButton(onPressed: () {
+
+                        }, child: Text('See details >'))
+                      ],
+                    )
+                  );
+                },
+              );
+          } else {
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('No hikes logged yet'),
+                ],
+              );
+            }
+          }
+        )
+      )
     );
   }
 } 
