@@ -5,6 +5,8 @@ import 'package:smarthiking_app/screens/hike_detail.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:smarthiking_app/models/active_hike.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -15,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   @override
   void initState() {
     super.initState();
@@ -22,6 +25,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
+
     Future<void> showDeleteDialog(int index, String hikeName) async {
       String confirmName = '';
       return showDialog<void>(
@@ -51,7 +56,9 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                 onPressed: () {
                   if (confirmName == hikeName) {
-                    
+                    if (activeHike.getActiveHikeId == index) {
+                      activeHike.deactivateHike();
+                    }
                     setState(() {
                       deleteHike(index);
                       deleteAllSamples(index);

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 
+
 class HikeDetail extends StatefulWidget {
   const HikeDetail({super.key, required this.hikeID});
   final int hikeID;
@@ -17,10 +18,13 @@ class HikeDetail extends StatefulWidget {
   State<HikeDetail> createState() => _HikeDetailState();
 }
 
-class _HikeDetailState extends State<HikeDetail> {
+class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
+  late MapController _mapController;
+
   @override
   void initState() {
     super.initState();
+    _mapController = MapController();
   }
 
   Future<List<LatLng>> getSampleCoords(int hikeId) async {
@@ -31,6 +35,84 @@ class _HikeDetailState extends State<HikeDetail> {
       coords.add(coord);
     }
     return coords;
+  }
+
+  LatLngBounds getRouteBounds (List<LatLng> routeCoords) {
+    //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
+    double minLat = routeCoords.first.latitude;
+    double minLong = routeCoords.first.longitude;
+    double maxLat = routeCoords.first.latitude;
+    double maxLong = routeCoords.first.longitude;
+
+    for (var i = 0; i < routeCoords.length; i ++) {
+      if(routeCoords[i].latitude < minLat) minLat = routeCoords[i].latitude;
+      if(routeCoords[i].latitude > maxLat) maxLat = routeCoords[i].latitude;
+      if(routeCoords[i].longitude < minLong) minLong = routeCoords[i].longitude;
+      if(routeCoords[i].longitude > maxLong) maxLong = routeCoords[i].longitude;
+    }
+
+    LatLng startCoord = LatLng(minLat, minLong);
+    LatLng endCoord = LatLng(maxLat, maxLong);
+    LatLngBounds bounds = LatLngBounds(startCoord, endCoord);
+    return bounds;
+  }
+
+  //derived from animated_map_controller by JaffaKetchup on GitHub
+  void moveMapToRouteBounds (List<LatLng> routeCoords) {
+    double minLat = routeCoords.first.latitude;
+    double minLong = routeCoords.first.longitude;
+    double maxLat = routeCoords.first.latitude;
+    double maxLong = routeCoords.first.longitude;
+
+    //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
+    for (var i = 0; i < routeCoords.length; i ++) {
+      if(routeCoords[i].latitude < minLat) minLat = routeCoords[i].latitude;
+      if(routeCoords[i].latitude > maxLat) maxLat = routeCoords[i].latitude;
+      if(routeCoords[i].longitude < minLong) minLong = routeCoords[i].longitude;
+      if(routeCoords[i].longitude > maxLong) maxLong = routeCoords[i].longitude;
+    }
+
+    LatLng startCoord = LatLng(minLat, minLong);
+    LatLng endCoord = LatLng(maxLat, maxLong);
+    LatLngBounds bounds = LatLngBounds(startCoord, endCoord);
+
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+    final northTween = Tween<double>(
+      begin: _mapController.camera.visibleBounds.north, end: bounds.north);
+    final eastTween = Tween<double>(
+      begin: _mapController.camera.visibleBounds.east, end: bounds.east);
+    final southTween = Tween<double>(
+      begin: _mapController.camera.visibleBounds.south, end: bounds.south);
+    final westTween = Tween<double>(
+      begin: _mapController.camera.visibleBounds.west, end: bounds.west);
+
+    // Create a animation controller that has a duration and a TickerProvider.
+    final controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    final Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+    controller.addListener(() {
+      _mapController.fitCamera(
+          CameraFit.bounds(bounds: LatLngBounds(
+              LatLng(southTween.evaluate(animation), westTween.evaluate(animation)),
+              LatLng(northTween.evaluate(animation), eastTween.evaluate(animation))
+              )
+            )
+          );
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
   }
 
   @override
@@ -58,6 +140,7 @@ class _HikeDetailState extends State<HikeDetail> {
             bool isHikeActive = activeHike.isHikeActive(widget.hikeID);
             Map hikeData = Map.from(allData.data?[0][0]as Map<Object?, Object?>);
             List<LatLng> routeCoords = List.from(allData.data?[1]as List<LatLng>);
+            LatLngBounds bounds = getRouteBounds(routeCoords);
 
             return Column(
               children: [
@@ -67,6 +150,7 @@ class _HikeDetailState extends State<HikeDetail> {
                   title: Text('This hike is currently active'),
                   trailing: TextButton(onPressed: () {
                     activeHike.deactivateHike();
+                    moveMapToRouteBounds(routeCoords);
                     setState(() {
                       isHikeActive = activeHike.isHikeActive(widget.hikeID);
                     });
@@ -114,15 +198,29 @@ class _HikeDetailState extends State<HikeDetail> {
                     width: MediaQuery.of(context).size.width / 10 * 9,
                     child: FlutterMap(
                       options: MapOptions(
-                        initialCenter: LatLng(51.5072, 0.1276),
-                        initialZoom: 9.0,
+                        initialCameraFit: CameraFit.bounds(bounds: bounds),
                       ),
-                      children: [
+                      mapController: _mapController,
+                      children: isHikeActive ? [
                         TileLayer(
                           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         ),
                         CurrentLocationLayer(
-  
+                          alignPositionOnUpdate: AlignOnUpdate.always,
+                        ),
+                        PolylineLayer(
+                          polylines: routeCoords.isNotEmpty ? [Polyline(
+                            points: routeCoords,
+                            color: Colors.blue,
+                            strokeWidth: 5,
+                            )] :
+                          <Polyline<Object>> []),
+                        RichAttributionWidget(attributions: [
+                          TextSourceAttribution('OpenStreetMap contributors')
+                        ])
+                      ] : [
+                        TileLayer(
+                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         ),
                         PolylineLayer(
                           polylines: routeCoords.isNotEmpty ? [Polyline(
@@ -205,9 +303,11 @@ class _HikeDetailState extends State<HikeDetail> {
                                 Position currentPosition = await Geolocator.getCurrentPosition();
                                 debugPrint('$currentPosition');
                                 int newSampleId = await getLatestID('samples');
-                                setState(() {
-                                  insertSample(Sample(id: newSampleId, hikeId: widget.hikeID, tofData: 'TEST', lat: currentPosition.latitude, long:currentPosition.longitude));
-                                });
+                                if (activeHike.getActiveHikeId != -1){
+                                  setState(() {
+                                    insertSample(Sample(id: newSampleId, hikeId: widget.hikeID, tofData: 'TEST', lat: currentPosition.latitude, long:currentPosition.longitude));
+                                  });
+                                }
                               }, 
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
