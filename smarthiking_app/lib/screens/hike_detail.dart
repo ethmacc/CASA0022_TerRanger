@@ -6,6 +6,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HikeDetail extends StatefulWidget {
   const HikeDetail({super.key, required this.hikeID});
@@ -19,6 +21,16 @@ class _HikeDetailState extends State<HikeDetail> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<List<LatLng>> getSampleCoords(int hikeId) async {
+    List<LatLng> coords = [];
+    List<Map> samples = await getSamplesByID(hikeId);
+    for (var i = 0; i < samples.length; i ++) {
+      LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
+      coords.add(coord);
+    }
+    return coords;
   }
 
   @override
@@ -40,10 +52,12 @@ class _HikeDetailState extends State<HikeDetail> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       body: FutureBuilder(
-        future: getHikeByID(widget.hikeID), 
-        builder: (context, hikeData) {
+        future: Future.wait([getHikeByID(widget.hikeID), getSampleCoords(widget.hikeID)]), 
+        builder: (context, allData) {
             ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
             bool isHikeActive = activeHike.isHikeActive(widget.hikeID);
+            Map hikeData = Map.from(allData.data?[0][0]as Map<Object?, Object?>);
+            List<LatLng> routeCoords = List.from(allData.data?[1]as List<LatLng>);
 
             return Column(
               children: [
@@ -75,7 +89,7 @@ class _HikeDetailState extends State<HikeDetail> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
                     child:  Text(
-                      '${hikeData.data?[0]['name']}',
+                      '${hikeData['name']}',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 32.0,
@@ -88,7 +102,7 @@ class _HikeDetailState extends State<HikeDetail> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
                     child:  Text(
-                      'Start Date & Time: ${hikeData.data?[0]['date']}',
+                      'Start Date & Time:',// ${hikeData.data?[0]['date']}',
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -107,6 +121,16 @@ class _HikeDetailState extends State<HikeDetail> {
                         TileLayer(
                           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         ),
+                        CurrentLocationLayer(
+  
+                        ),
+                        PolylineLayer(
+                          polylines: routeCoords.isNotEmpty ? [Polyline(
+                            points: routeCoords,
+                            color: Colors.blue,
+                            strokeWidth: 5,
+                            )] :
+                          <Polyline<Object>> []),
                         RichAttributionWidget(attributions: [
                           TextSourceAttribution('OpenStreetMap contributors')
                         ])
@@ -121,7 +145,7 @@ class _HikeDetailState extends State<HikeDetail> {
                       child: Column(
                           children: [
                             Text('Distance'),
-                            Text('${hikeData.data?[0]['distance']} km',
+                            Text('${hikeData['distance']} km',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -135,7 +159,7 @@ class _HikeDetailState extends State<HikeDetail> {
                       child: Column(
                         children: [
                           Text('Max Elevation'),
-                          Text('${hikeData.data?[0]['elevation']} ft',
+                          Text('${hikeData['elevation']} ft',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -175,7 +199,22 @@ class _HikeDetailState extends State<HikeDetail> {
                                 ),
                               child: Text('View data samples >'),
                               )
-                )
+                      ),
+                TextButton(
+                              onPressed: () async {
+                                Position currentPosition = await Geolocator.getCurrentPosition();
+                                debugPrint('$currentPosition');
+                                int newSampleId = await getLatestID('samples');
+                                setState(() {
+                                  insertSample(Sample(id: newSampleId, hikeId: widget.hikeID, tofData: 'TEST', lat: currentPosition.latitude, long:currentPosition.longitude));
+                                });
+                              }, 
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
+                                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
+                                ),
+                              child: Text('TEST: add position'),
+                              )
                   ],
                 )
               ],

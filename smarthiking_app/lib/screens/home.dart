@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Text('This action cannot be undone. Are you sure you wish to proceed with deleting this hike?'),
+                  Text('This action cannot be undone. Are you sure you wish to proceed with deleting this hike and all associated data?'),
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: TextField(
@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
                     
                     setState(() {
                       deleteHike(index);
+                      deleteAllSamples(index);
                     });
                     Navigator.of(context).pop();
                   } else {

@@ -24,10 +24,21 @@ class Hike {
 
 class Sample {
   final int id;
-  final String hikeName;
-  final String tofData; 
+  final int hikeId;
+  final String tofData;
+  final double lat; 
+  final double long;
 
-  const Sample({required this.id, required this.hikeName, required this.tofData});
+  const Sample({required this.id, required this.hikeId, required this.tofData, required this.lat, required this.long});
+
+  Map<String, Object?> toMap() {
+    return {'id' : id, 'hikeId' : hikeId, 'tofData' : tofData, 'lat' : lat, 'long': long};
+  }
+
+  @override
+  String toString() {
+    return 'Hike{id : $id, hikeId : $hikeId, tofData : $tofData, lat : $lat, long: $long}';
+  }
 }
 
 Future<Database> openHikingDataBase () async {
@@ -35,8 +46,11 @@ Future<Database> openHikingDataBase () async {
   final database = openDatabase(
     join(await getDatabasesPath(), 'hikes_database.db'),
     onCreate: (db, version) {
-      return db.execute(
-        'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, distance INTEGER, elevation INTEGER date TEXT); CREATE TABLE samples(id INTEGER PRIMARY KEY, hikeName TEXT, tofData TEXT)'
+      db.execute(
+        'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, distance INTEGER, elevation INTEGER, date TEXT)'
+      );
+      db.execute(
+        'CREATE TABLE samples(id INTEGER PRIMARY KEY, hikeId INTEGER, tofData TEXT, lat FLOAT, long FLOAT)'
       );
     },
     version: 1,
@@ -83,6 +97,36 @@ Future<List<Map>> getHikeByID (int id) async {
   final db = await openHikingDataBase();
 
   List<Map> maps = await db.rawQuery("SELECT * FROM hikes WHERE id = $id");
+  return maps;
+}
+
+Future<void> insertSample(Sample sample) async {
+    //Get reference to db
+    final db = await openHikingDataBase();
+
+    try{
+      await db.insert(
+        'samples', 
+        sample.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } on DatabaseException catch (e) {
+    debugPrint('$e');
+    }
+}
+
+Future<int> deleteAllSamples(int hikeId) async{
+//Get reference to db
+    final db = await openHikingDataBase();
+
+    return await db.delete('samples', where: 'hikeId = ?', whereArgs: [hikeId]);
+}
+
+Future<List<Map>> getSamplesByID (int hikeId) async {
+  //Get reference to db
+  final db = await openHikingDataBase();
+
+  List<Map> maps = await db.rawQuery("SELECT * FROM samples WHERE hikeId = $hikeId");
   return maps;
 }
 
