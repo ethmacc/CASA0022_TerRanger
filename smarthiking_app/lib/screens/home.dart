@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(child: FutureBuilder(
         future: getAllData('hikes'),
         builder: (context, hikeMap) {
-          if (hikeMap.data!.isNotEmpty) {
+          if (hikeMap.data != null || hikeMap.data!.isNotEmpty) {
             return ListView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: hikeMap.data?.length,
@@ -149,10 +149,17 @@ class _HomePageState extends State<HomePage> {
                           leading: Icon(Icons.terrain),
                           title: Text('Max elevation ${hikeMap.data?[index]['elevation']} ft'),
                         ),
-                        TextButton(onPressed: () {
+                        TextButton(onPressed: ()async {
+                          List<Map> initialMaps = await getSamplesByID(hikeMap.data?[index]['id']);
+                          List<Map> listedHike = await getHikeByID(hikeMap.data?[index]['id']);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HikeDetail(hikeID:  hikeMap.data?[index]['id']))
+                            MaterialPageRoute(builder: (context) => HikeDetail(
+                              hikeID: hikeMap.data?[index]['id'],
+                              initalHike: listedHike[0],
+                              initialMaps: initialMaps,
+                              )
+                            )
                           );
                         }, child: Text('See details >'))
                       ],

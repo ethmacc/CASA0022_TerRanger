@@ -38,13 +38,12 @@ class _EnterHikeState extends State<EnterHike> {
                           int newId = await getLatestID('hikes');
                           debugPrint('$newId');
                           String date = DateTime.now().toString();
-                          insertHike(
-                            Hike(id:newId, name:value, distance:0, elevation: 0, date: date)
-                          );
+                          Hike newHike = Hike(id:newId, name:value, distance:0, elevation: 0, date: date);
+                          insertHike(newHike);
                           activeHike.activateHike(newId);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HikeDetail(hikeID: newId))
+                            MaterialPageRoute(builder: (context) => HikeDetail(hikeID: newId, initalHike: newHike.toMap(), initialMaps: []))
                           );
                         },
                       )

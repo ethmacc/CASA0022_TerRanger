@@ -11,8 +11,10 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 
 class HikeDetail extends StatefulWidget {
-  const HikeDetail({super.key, required this.hikeID});
+  const HikeDetail({super.key, required this.hikeID, required this.initialMaps, required this.initalHike});
   final int hikeID;
+  final List<Map> initialMaps;
+  final Map initalHike;
 
   @override
   State<HikeDetail> createState() => _HikeDetailState();
@@ -26,16 +28,6 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
   void initState() {
     super.initState();
     _mapController = MapController();
-  }
-
-  Future<List<LatLng>> getSampleCoords(int hikeId) async {
-    List<LatLng> coords = [];
-    List<Map> samples = await getSamplesByID(hikeId);
-    for (var i = 0; i < samples.length; i ++) {
-      LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
-      coords.add(coord);
-    }
-    return coords;
   }
 
   LatLngBounds getRouteBounds (List<LatLng> routeCoords) {
@@ -138,12 +130,35 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       body: FutureBuilder(
-        future: Future.wait([getHikeByID(widget.hikeID), getSampleCoords(widget.hikeID)]), 
+        future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
         builder: (context, allData) {
             ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
             bool isHikeActive = activeHike.isHikeActive(widget.hikeID);
-            Map hikeData = Map.from(allData.data?[0][0] as Map<Object?, Object?>);
-            List<LatLng> routeCoords = List.from(allData.data?[1]as List<LatLng>);
+
+            late Map hikeData;
+            if (allData.data?[0] != null) {
+              hikeData = Map.from(allData.data?[0][0] as Map<Object?, Object?>); //default to inital hike map received on navigator push
+            } else {
+              hikeData = widget.initalHike;
+            }
+
+            List<LatLng> routeCoords = [];
+            List<Map>? receivedMaps = allData.data?[1]; 
+            late List<Map> samples;
+
+            if (receivedMaps != null) {
+              samples = receivedMaps;
+            } else {
+              samples = widget.initialMaps; //default to the initalMaps list received on navigator push
+            }
+            
+            if (samples.isNotEmpty) {
+              for (var i = 0; i < samples.length; i ++) {
+                  LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
+                  routeCoords.add(coord);
+                }
+            }
+
             late LatLngBounds bounds; 
 
             if (routeCoords.length > 1) bounds = getRouteBounds(routeCoords);
