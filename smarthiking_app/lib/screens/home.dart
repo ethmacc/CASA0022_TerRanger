@@ -3,8 +3,6 @@ import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/screens/hike_detail.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:provider/provider.dart';
 
@@ -120,7 +118,13 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                         ListTile(
                           leading: Icon(Icons.hiking),
-                          title: Text(hikeMap.data?[index]['name']),
+                          title: Text(
+                            hikeMap.data?[index]['name'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                            ),
+                            ),
                           subtitle: Text('Date: ${hikeMap.data?[index]['date']}'),
                           trailing: PopupMenuButton<int>(
                             onSelected: (int selected) {
@@ -136,21 +140,7 @@ class _HomePageState extends State<HomePage> {
                             icon: Icon(Icons.more_vert)),
                         ),
                         SizedBox(
-                          height: 300,
-                          child: FlutterMap(
-                            options: MapOptions(
-                              initialCenter: LatLng(51.5072, 0.1276),
-                              initialZoom: 9.0,
-                            ),
-                            children: [
-                              TileLayer(
-                                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              ),
-                              RichAttributionWidget(attributions: [
-                                TextSourceAttribution('OpenStreetMap contributors')
-                              ])
-                            ],
-                          ),
+                          //height: 300, TODO: add some content
                         ),
                         ListTile(
                           leading: Icon(Icons.route),

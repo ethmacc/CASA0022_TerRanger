@@ -8,7 +8,7 @@ import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'dart:math';
 
 class HikeDetail extends StatefulWidget {
   const HikeDetail({super.key, required this.hikeID});
@@ -20,6 +20,7 @@ class HikeDetail extends StatefulWidget {
 
 class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
   late MapController _mapController;
+  late Position initialPos;
 
   @override
   void initState() {
@@ -74,45 +75,48 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
 
     LatLng startCoord = LatLng(minLat, minLong);
     LatLng endCoord = LatLng(maxLat, maxLong);
-    LatLngBounds bounds = LatLngBounds(startCoord, endCoord);
 
-    // Create some tweens. These serve to split up the transition from one location to another.
-    // In our case, we want to split the transition be<tween> our current map center and the destination.
-    final northTween = Tween<double>(
-      begin: _mapController.camera.visibleBounds.north, end: bounds.north);
-    final eastTween = Tween<double>(
-      begin: _mapController.camera.visibleBounds.east, end: bounds.east);
-    final southTween = Tween<double>(
-      begin: _mapController.camera.visibleBounds.south, end: bounds.south);
-    final westTween = Tween<double>(
-      begin: _mapController.camera.visibleBounds.west, end: bounds.west);
+    if (Point(startCoord.latitude, startCoord.longitude).distanceTo(Point(endCoord.latitude, endCoord.longitude)) > 0) {
+      LatLngBounds bounds = LatLngBounds(startCoord, endCoord);
 
-    // Create a animation controller that has a duration and a TickerProvider.
-    final controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
-    // The animation determines what path the animation will take. You can try different Curves values, although I found
-    // fastOutSlowIn to be my favorite.
-    final Animation<double> animation =
-        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
-    controller.addListener(() {
-      _mapController.fitCamera(
-          CameraFit.bounds(bounds: LatLngBounds(
-              LatLng(southTween.evaluate(animation), westTween.evaluate(animation)),
-              LatLng(northTween.evaluate(animation), eastTween.evaluate(animation))
+      // Create some tweens. These serve to split up the transition from one location to another.
+      // In our case, we want to split the transition be<tween> our current map center and the destination.
+      final northTween = Tween<double>(
+        begin: _mapController.camera.visibleBounds.north, end: bounds.north);
+      final eastTween = Tween<double>(
+        begin: _mapController.camera.visibleBounds.east, end: bounds.east);
+      final southTween = Tween<double>(
+        begin: _mapController.camera.visibleBounds.south, end: bounds.south);
+      final westTween = Tween<double>(
+        begin: _mapController.camera.visibleBounds.west, end: bounds.west);
+
+      // Create a animation controller that has a duration and a TickerProvider.
+      final controller = AnimationController(
+          duration: const Duration(milliseconds: 500), vsync: this);
+      // The animation determines what path the animation will take. You can try different Curves values, although I found
+      // fastOutSlowIn to be my favorite.
+      final Animation<double> animation =
+          CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+      controller.addListener(() {
+        _mapController.fitCamera(
+            CameraFit.bounds(bounds: LatLngBounds(
+                LatLng(southTween.evaluate(animation), westTween.evaluate(animation)),
+                LatLng(northTween.evaluate(animation), eastTween.evaluate(animation))
+                )
               )
-            )
-          );
-    });
+            );
+      });
 
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.dispose();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.dispose();
-      }
-    });
+      animation.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.dispose();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.dispose();
+        }
+      });
 
-    controller.forward();
+      controller.forward();
+    }
   }
 
   @override
@@ -138,9 +142,11 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
         builder: (context, allData) {
             ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
             bool isHikeActive = activeHike.isHikeActive(widget.hikeID);
-            Map hikeData = Map.from(allData.data?[0][0]as Map<Object?, Object?>);
+            Map hikeData = Map.from(allData.data?[0][0] as Map<Object?, Object?>);
             List<LatLng> routeCoords = List.from(allData.data?[1]as List<LatLng>);
-            LatLngBounds bounds = getRouteBounds(routeCoords);
+            late LatLngBounds bounds; 
+
+            if (routeCoords.length > 1) bounds = getRouteBounds(routeCoords);
 
             return Column(
               children: [
@@ -150,7 +156,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                   title: Text('This hike is currently active'),
                   trailing: TextButton(onPressed: () {
                     activeHike.deactivateHike();
-                    moveMapToRouteBounds(routeCoords);
+                    if (routeCoords.length > 1){
+                      moveMapToRouteBounds(routeCoords);
+                    }
                     setState(() {
                       isHikeActive = activeHike.isHikeActive(widget.hikeID);
                     });
@@ -186,7 +194,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
                     child:  Text(
-                      'Start Date & Time:',// ${hikeData.data?[0]['date']}',
+                      'Start Date & Time: ${hikeData['date']}',
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -197,7 +205,11 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                     height: MediaQuery.of(context).size.height / 3,
                     width: MediaQuery.of(context).size.width / 10 * 9,
                     child: FlutterMap(
-                      options: MapOptions(
+                      options: routeCoords.length < 2 ? MapOptions(
+                        initialCenter: LatLng(51.5, 0.127),
+                        initialZoom: 9,
+                      ) :
+                      MapOptions(
                         initialCameraFit: CameraFit.bounds(bounds: bounds),
                       ),
                       mapController: _mapController,

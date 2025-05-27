@@ -20,7 +20,7 @@ class BottomNavbar extends StatelessWidget{
           case 0:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage(title: 'Home',))
+              MaterialPageRoute(builder: (context) => const HomePage(title: 'Home: Your Hikes',))
             );
           case 1:
             Navigator.push(
