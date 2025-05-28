@@ -57,7 +57,7 @@ class _SampleDetailState extends State<SampleDetail> {
     List<int> dataList = json.decode(rawData).cast<int>().toList();
     List<Vector> scaledList = [];
     for (int i=0; i < dataList.length; i++) {
-      //scaledList.add();
+      //scaledList.add(); TODO: finish off data processing
     }
   }
 
