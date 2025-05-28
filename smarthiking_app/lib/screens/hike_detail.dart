@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
-import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:smarthiking_app/screens/sample_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -133,8 +133,8 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
       body: FutureBuilder(
         future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
         builder: (context, allData) {
-            ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
-            bool isHikeActive = activeHike.isHikeActive(widget.hikeID);
+            ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
+            bool isHikeActive = connManager.isHikeActive(widget.hikeID);
 
             late Map hikeData;
             if (allData.data?[0] != null) {
@@ -164,19 +164,20 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
 
             if (routeCoords.length > 1) bounds = getRouteBounds(routeCoords);
 
-            return Column(
+            return SingleChildScrollView(
+              child: Column(
               children: [
                 isHikeActive ? ListTile(
                   leading: Icon(Icons.radio_button_checked, 
                     color: Colors.red,), 
                   title: Text('This hike is currently active'),
                   trailing: TextButton(onPressed: () {
-                    activeHike.deactivateHike();
+                    connManager.deactivateHike();
                     if (routeCoords.length > 1){
                       moveMapToRouteBounds(routeCoords);
                     }
                     setState(() {
-                      isHikeActive = activeHike.isHikeActive(widget.hikeID);
+                      isHikeActive = connManager.isHikeActive(widget.hikeID);
                     });
                   }, child: Text('deactivate')),
                   ) : 
@@ -186,9 +187,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                   ),
                   title: Text('This hike is not active'),
                   trailing: TextButton(onPressed: () {
-                    activeHike.activateHike(widget.hikeID);
+                    connManager.activateHike(widget.hikeID);
                     setState(() {
-                      isHikeActive = activeHike.isHikeActive(widget.hikeID);
+                      isHikeActive = connManager.isHikeActive(widget.hikeID);
                     });
                   }, child: Text('activate')),
                 ),
@@ -316,8 +317,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                     Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child:
                     TextButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID,)));
+                              onPressed: () async {
+                                List<Map> allSamples = await getSamplesByID(widget.hikeID);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID, initialSamples: allSamples,)));
                               }, 
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
@@ -331,7 +333,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                                 Position currentPosition = await Geolocator.getCurrentPosition();
                                 debugPrint('$currentPosition');
                                 int newSampleId = await getLatestID('samples');
-                                if (activeHike.getActiveHikeId != -1){
+                                if (connManager.getActiveHikeId != -1){
                                   setState(() {
                                     insertSample(Sample(id: newSampleId, hikeId: widget.hikeID, tofData: 'TEST', lat: currentPosition.latitude, long:currentPosition.longitude));
                                   });
@@ -346,6 +348,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                   ],
                 )
               ],
+            )
             );
           }
         ),

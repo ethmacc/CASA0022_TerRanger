@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:smarthiking_app/models/db_manager.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ConnManager extends ChangeNotifier {
   final _ble = FlutterReactiveBle();
@@ -15,6 +17,28 @@ class ConnManager extends ChangeNotifier {
 
   bool scanning = false;
   bool get isScanning => scanning;
+
+  int activeHikeId = -1;
+  int get getActiveHikeId => activeHikeId;
+
+  void activateHike(int id) {
+    activeHikeId = id;
+    notifyListeners();
+  }
+
+  void deactivateHike() {
+    activeHikeId = -1;
+    notifyListeners();
+  }
+
+  bool isHikeActive(int id) {
+    if (activeHikeId == id) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   
   List<int> decoded = List.empty(growable: true); 
 
@@ -24,7 +48,7 @@ class ConnManager extends ChangeNotifier {
                   _onScanUpdate,
                   onError: (e) {
                     debugPrint('${e.name}');
-                  }
+                  },
                 );
     notifyListeners();
   }
@@ -60,7 +84,7 @@ class ConnManager extends ChangeNotifier {
         serviceId: Uuid.parse('185B'),
         characteristicId: Uuid.parse('2C0A'));
 
-    _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) {
+    _notifySub = _ble.subscribeToCharacteristic(characteristic).listen((bytes) async {
         decoded.clear();
         ByteData byteData = ByteData.sublistView(Uint8List.fromList(bytes));
         for (var i= 0; i < bytes.length;i += 2) {
@@ -68,7 +92,20 @@ class ConnManager extends ChangeNotifier {
           decoded.add(decodedInt);
         }
         //debugPrint('Data: $bytes');
-        debugPrint('Decoded: $decoded');
+        if (activeHikeId != -1) {
+          debugPrint('Active Hike: $activeHikeId Decoded: $decoded');
+          int newSampleId = await getLatestID('samples');
+          Position currentPosition = await Geolocator.getCurrentPosition();
+          insertSample(
+            Sample(
+              id: newSampleId, 
+              hikeId: activeHikeId, 
+              tofData: '$decoded', 
+              lat: currentPosition.latitude, 
+              long: currentPosition.longitude));
+        } else {
+          debugPrint('No hike is active, data not captured');
+        }
     });
   }
 }

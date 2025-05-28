@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
 import 'package:smarthiking_app/screens/hike_detail.dart';
-import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:provider/provider.dart';
 
 class EnterHike extends StatefulWidget {
@@ -14,7 +14,7 @@ class EnterHike extends StatefulWidget {
 class _EnterHikeState extends State<EnterHike> {
   @override
   Widget build(BuildContext context) {
-    ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +40,7 @@ class _EnterHikeState extends State<EnterHike> {
                           String date = DateTime.now().toString();
                           Hike newHike = Hike(id:newId, name:value, distance:0, elevation: 0, date: date);
                           insertHike(newHike);
-                          activeHike.activateHike(newId);
+                          connManager.activateHike(newId);
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => HikeDetail(hikeID: newId, initalHike: newHike.toMap(), initialMaps: []))

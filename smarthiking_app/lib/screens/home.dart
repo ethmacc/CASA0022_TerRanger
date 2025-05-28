@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/screens/hike_detail.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
-import 'package:smarthiking_app/models/active_hike.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    ActiveHike activeHike = Provider.of<ActiveHike>(context, listen:false);
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
 
     Future<void> showDeleteDialog(int index, String hikeName) async {
       String confirmName = '';
@@ -48,8 +48,8 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                 onPressed: () {
                   if (confirmName == hikeName) {
-                    if (activeHike.getActiveHikeId == index) {
-                      activeHike.deactivateHike();
+                    if (connManager.getActiveHikeId == index) {
+                      connManager.deactivateHike();
                     }
                     setState(() {
                       deleteHike(index);
@@ -101,7 +101,14 @@ class _HomePageState extends State<HomePage> {
       body: Center(child: FutureBuilder(
         future: getAllData('hikes'),
         builder: (context, hikeMap) {
-          if (hikeMap.data != null || hikeMap.data!.isNotEmpty) {
+          late List<Map> hikeData;
+          if (hikeMap.data != null){
+            hikeData = List.from(hikeMap.data as List<Map>);
+          } else {
+            hikeData = [];
+          }
+
+          if (hikeData.isNotEmpty) {
             return ListView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: hikeMap.data?.length,
