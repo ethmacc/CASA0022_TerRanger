@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/models/active_hike.dart';
+import 'package:smarthiking_app/screens/sample_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
@@ -316,7 +317,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                     child:
                     TextButton(
                               onPressed: () {
-                                //TODO: add route to data viewer
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID,)));
                               }, 
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
