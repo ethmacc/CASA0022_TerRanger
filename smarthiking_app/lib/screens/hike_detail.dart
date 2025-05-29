@@ -328,14 +328,22 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                               child: Text('View data samples >'),
                               )
                       ),
-                TextButton(
+                TextButton(//TODO: remove test button and switch data receive control to conn_manager
                               onPressed: () async {
                                 Position currentPosition = await Geolocator.getCurrentPosition();
                                 debugPrint('$currentPosition');
                                 int newSampleId = await getLatestID('samples');
                                 if (connManager.getActiveHikeId != -1){
                                   setState(() {
-                                    insertSample(Sample(id: newSampleId, hikeId: widget.hikeID, tofData: 'TEST', lat: currentPosition.latitude, long:currentPosition.longitude));
+                                    insertSample(
+                                      Sample(
+                                        id: newSampleId, 
+                                        hikeId: widget.hikeID, 
+                                        tofData: '[794, 723, 287, 269, 880, 792, 716, 206, 1001, 194, 178, 180, 1330, 1014, 181, 166, 617, 681, 734, 808, 668, 745, 797, 875, 253, 792, 859, 952, 229, 778, 857, 325, 0, 0, 100]',
+                                        lat: currentPosition.latitude,
+                                         long:currentPosition.longitude
+                                        )
+                                      );
                                   });
                                 }
                               }, 
