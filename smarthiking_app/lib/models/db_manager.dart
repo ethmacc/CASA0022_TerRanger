@@ -6,19 +6,17 @@ import 'package:sqflite/sqflite.dart';
 class Hike {
   final int id;
   final String name;
-  final int distance;
-  final int elevation;
   final String date;
 
-  const Hike({required this.id, required this.name, required this.distance, required this.elevation, required this.date});
+  const Hike({required this.id, required this.name, required this.date});
 
   Map<String, Object?> toMap() {
-    return {'id' : id, 'name' : name, 'distance' : distance, 'elevation' : elevation, 'date': date};
+    return {'id' : id, 'name' : name, 'date': date};
   }
 
   @override
   String toString() {
-    return 'Hike{id : $id, name : $name, distance : $distance, elevation : $elevation, date: $date}';
+    return 'Hike{id : $id, name : $name, date: $date}';
   }
 }
 
@@ -28,16 +26,17 @@ class Sample {
   final String tofData;
   final double lat; 
   final double long;
+  final double elevation;
 
-  const Sample({required this.id, required this.hikeId, required this.tofData, required this.lat, required this.long});
+  const Sample({required this.id, required this.hikeId, required this.tofData, required this.lat, required this.long, required this.elevation});
 
   Map<String, Object?> toMap() {
-    return {'id' : id, 'hikeId' : hikeId, 'tofData' : tofData, 'lat' : lat, 'long': long};
+    return {'id' : id, 'hikeId' : hikeId, 'tofData' : tofData, 'lat' : lat, 'long': long, 'elevation':elevation};
   }
 
   @override
   String toString() {
-    return 'Hike{id : $id, hikeId : $hikeId, tofData : $tofData, lat : $lat, long: $long}';
+    return 'Hike{id : $id, hikeId : $hikeId, tofData : $tofData, lat : $lat, long: $long, elevation: $elevation}';
   }
 }
 
@@ -47,10 +46,10 @@ Future<Database> openHikingDataBase () async {
     join(await getDatabasesPath(), 'hikes_database.db'),
     onCreate: (db, version) {
       db.execute(
-        'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, distance INTEGER, elevation INTEGER, date TEXT)'
+        'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, date TEXT)'
       );
       db.execute(
-        'CREATE TABLE samples(id INTEGER PRIMARY KEY, hikeId INTEGER, tofData TEXT, lat FLOAT, long FLOAT)'
+        'CREATE TABLE samples(id INTEGER PRIMARY KEY, hikeId INTEGER, tofData TEXT, lat FLOAT, long FLOAT, elevation FLOAT)'
       );
     },
     version: 1,
@@ -141,9 +140,15 @@ Future<List<Map>> getAllData (String tableName) async {
 void devOnly () async {
   //Dev only function for manipulating the database
   final db = await openHikingDataBase();
-  return db.execute(
-        'CREATE TABLE hikes(id INTEGER PRIMARY KEY, name TEXT, distance INTEGER, elevation INTEGER, date TEXT)'
+  db.execute(
+        'ALTER TABLE samples ADD elevation FLOAT'
       );
+  db.execute(
+    'ALTER TABLE hikes DROP COLUMN distance'
+  );
+  db.execute(
+    'ALTER TABLE hikes DROP COLUMN elevation'
+  );
 }
   
 

@@ -2,6 +2,7 @@
 #include <Wire.h> //include Wire for I2C
 #include <SparkFun_VL53L5CX_Library.h> //http://librarymanager/All#SparkFun_VL53L5CX
 #include <ArduinoBLE.h>
+#include <Arduino_LSM9DS1.h>
 
 SparkFun_VL53L5CX tof_1;
 SparkFun_VL53L5CX tof_2;
@@ -22,9 +23,11 @@ int imageWidth = 0; //Used to pretty print output
 int buttonState = 0;
 
 // Bluetooth® Low Energy Service
-#define BUFFER_SIZE res * 2 * 2 // Buffer size is resolution x 2 sensors x 2 bytes
+#define BUFFER_SIZE ( (res * 2 ) + 3) * 2 // Buffer size is resolution x 2 sensors x 2 bytes plus 3 * 2 bytes for acc data
 BLEService tofService = BLEService("185B");
 BLECharacteristic tofChar = BLECharacteristic("2C0A", BLERead | BLENotify, BUFFER_SIZE, false); 
+
+float accX, accY, accZ;
 
 unsigned long pressTime = millis();
 
@@ -49,6 +52,13 @@ void setup()
 
   imageResolution = tof_1.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
   imageWidth = sqrt(imageResolution); //Calculate printing width
+
+  //IMU initialisation
+  if (!IMU.begin()) {
+    Serial.println("Failed to initialize IMU!");
+    while (1);
+  }
+  Serial.println("IMU initialised");
 
   // BLE begin initialization
   if (!BLE.begin()) {
@@ -92,9 +102,29 @@ void loop()
           Serial.println("ToF cam2");
           updateDistance(2);
 
-          uint16_t * all_data = new uint16_t[res * 2];
-          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + res, all_data);
-          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + res, all_data + res);
+           if (IMU.accelerationAvailable()) {
+            IMU.readAcceleration(accX, accY, accZ);
+            
+          }
+
+          uint16_t roundX = round(accX * 100.0);
+          uint16_t roundY = round(accY * 100.0);
+          uint16_t roundZ = round(accZ * 100.0);
+
+          Serial.println(roundX);
+          Serial.println(roundY);
+          Serial.println(roundZ);
+          
+          uint16_t acc_data[3] = {roundX, roundY, roundZ};
+
+          uint16_t * combined_tof = new uint16_t[res * 2];
+          std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + res, combined_tof);
+          std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + res, combined_tof + res);
+
+          uint16_t * all_data = new uint16_t[(res * 2) + 3];
+          std::copy(combined_tof, combined_tof + (res * 2), all_data);
+          std::copy(acc_data, acc_data + 3, all_data + (res * 2));
+          
           tofChar.writeValue(all_data, BUFFER_SIZE);
           pressTime = millis();
         }
@@ -111,6 +141,19 @@ void loop()
       updateDistance(1);
       Serial.println("ToF cam2");
       updateDistance(2);
+
+      if (IMU.accelerationAvailable()) {
+        IMU.readAcceleration(accX, accY, accZ);
+      }
+
+        uint16_t roundX = round(accX * 100.0);
+        uint16_t roundY = round(accY * 100.0);
+        uint16_t roundZ = round(accZ * 100.0);
+
+        uint16_t acc_data[3] = {roundX, roundY, roundZ};
+
+        Serial.println(acc_data[0]);
+
       pressTime = millis();
     }
   }

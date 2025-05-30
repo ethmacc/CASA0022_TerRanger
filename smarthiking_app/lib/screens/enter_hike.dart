@@ -38,7 +38,7 @@ class _EnterHikeState extends State<EnterHike> {
                           int newId = await getLatestID('hikes');
                           debugPrint('$newId');
                           String date = DateTime.now().toString();
-                          Hike newHike = Hike(id:newId, name:value, distance:0, elevation: 0, date: date);
+                          Hike newHike = Hike(id:newId, name:value, date: date);
                           insertHike(newHike);
                           connManager.activateHike(newId);
                           Navigator.push(
@@ -49,7 +49,7 @@ class _EnterHikeState extends State<EnterHike> {
                       )
             ),
             TextButton(onPressed: () {
-                    //devOnly();
+                    devOnly();
                   }, child: Text('DEV ONLY'))
           ],
         ),
