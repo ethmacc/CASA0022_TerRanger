@@ -20,6 +20,8 @@ class SampleDetail extends StatefulWidget {
 
 class _SampleDetailState extends State<SampleDetail> {
   double selected = 1.0;
+  int selectedSection = 0;
+  List<String> sectionTypes = ['Fore', 'Mid-Fore', 'Mid-Aft', 'Aft'];
 
   dynamic getRouteBounds (List<LatLng> routeCoords) {
     //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
@@ -102,7 +104,7 @@ class _SampleDetailState extends State<SampleDetail> {
     for (int i=0; i < dataList.length - 3; i++) {
       scaledList[i].scale(dataList[i].toDouble()); //scale vectors using tofdata
       //TODO: rotate vectors using IMU data
-      final point = (scaledList[i].x, scaledList[i].z, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
+      final point = (scaledList[i].x, scaledList[i].z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
           fore.add(point);
@@ -188,98 +190,58 @@ class _SampleDetailState extends State<SampleDetail> {
                   )
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                  padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 4.5,
+                    height: MediaQuery.of(context).size.width / 10 * 5,
                     child:  ScatterChart(
                       ScatterChartData(
-                        scatterSpots: pointListData[0].asMap().entries.map((e) {
+                        scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
                           final (double x, double y, double size) = e.value;
                           return ScatterSpot(
                             x,
                             y,
                           );
-                        }).toList()
+                        }).toList(),
+                        maxX: 900.0,
+                        minX: -900.0,
+                        maxY: 900.0,
+                        minY: 0,
+                        titlesData: FlTitlesData(
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          bottomTitles: AxisTitles(sideTitles: SideTitles(minIncluded: false, maxIncluded: false, showTitles: true, reservedSize: 24)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: true,maxIncluded: false, reservedSize: 36))
+                        ) 
                       )
                     )
                   )
                 ),
-                Text('Fore section',
-                  style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 50, 10, 20),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 4.5,
-                    child:  ScatterChart(
-                      ScatterChartData(
-                        scatterSpots: pointListData[1].asMap().entries.map((e) {
-                          final (double x, double y, double size) = e.value;
-                          return ScatterSpot(
-                            x,
-                            y,
-                          );
-                        }).toList()
-                      )
-                    )
-                  )
-                ),
-                Text('Mid-Fore section',
-                  style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 50, 10, 20),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 4.5,
-                    child:  ScatterChart(
-                      ScatterChartData(
-                        scatterSpots: pointListData[2].asMap().entries.map((e) {
-                          final (double x, double y, double size) = e.value;
-                          return ScatterSpot(
-                            x,
-                            y,
-                          );
-                        }).toList()
-                      )
-                    )
-                  )
-                ),
-                Text('Mid-Aft section',
-                  style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 50, 10, 20),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 4.5,
-                    child:  ScatterChart(
-                      ScatterChartData(
-                        scatterSpots: pointListData[3].asMap().entries.map((e) {
-                          final (double x, double y, double size) = e.value;
-                          return ScatterSpot(
-                            x,
-                            y,
-                          );
-                        }).toList()
-                      )
-                    )
-                  )
-                ),
-                Text('Aft section',
-                  style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-                Text('Selected sample: ${selected.floor()}'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  IconButton(
+                    onPressed: () {
+                      if (selectedSection > 0) {
+                        setState(() {
+                          selectedSection -= 1;
+                        });
+                      }
+                    }, 
+                    icon: Icon(Icons.chevron_left)
+                  ),
+                  Text('Selected Section: ${sectionTypes[selectedSection]}'),
+                  IconButton(
+                    onPressed: () {
+                      if (selectedSection < 3) {
+                        setState(() {
+                          selectedSection += 1;
+                        });
+                      }
+                    }, 
+                    icon: Icon(Icons.chevron_right)
+                  ),
+                ],),
                 Slider(
                   value: selected, 
                   onChanged: (double value) {
@@ -292,13 +254,48 @@ class _SampleDetailState extends State<SampleDetail> {
                   max: samplesToLoad.length.toDouble(),
                   divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 50),
-                  child: Text('No. of samples: ${samplesToLoad.length}')
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: Text('Selected sample'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                        child: Text('${selected.floor()}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22),
+                        ),
+                      )
+                    ]
+                  ),
+                  Column(children: [
+                    Padding(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Text('No. of samples')
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                    child: Text('${samplesToLoad.length}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 22),
+                    )
+                  ),
+                  ],)
+                ]
                 ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                  ),
                 SizedBox(
                     height: MediaQuery.of(context).size.height / 3,
-                    width: MediaQuery.of(context).size.width / 10 * 9,
+                    width: MediaQuery.of(context).size.width / 10 * 8,
                     child: FlutterMap(
                       options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
                         initialCenter: LatLng(51.5, 0.127),
@@ -311,6 +308,7 @@ class _SampleDetailState extends State<SampleDetail> {
                         TileLayer(
                           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         ),
+                        MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
                         PolylineLayer(
                           polylines: routeCoords.isNotEmpty ? [Polyline(
                             points: routeCoords,

@@ -143,13 +143,6 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           //height: 300, TODO: add some content
                         ),
-                        ListTile(
-                          leading: Icon(Icons.route),
-                          title: Text('0 km travelled'), //TODO: add getter func for distance from polyline
-                        ),ListTile(
-                          leading: Icon(Icons.terrain),
-                          title: Text('Max elevation 0 ft'), //TODO: add getter func for max elevation from samples
-                        ),
                         TextButton(onPressed: ()async {
                           List<Map> initialMaps = await getSamplesByID(hikeMap.data?[index]['id']);
                           List<Map> listedHike = await getHikeByID(hikeMap.data?[index]['id']);

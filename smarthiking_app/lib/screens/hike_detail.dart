@@ -31,6 +31,17 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
     _mapController = MapController();
   }
 
+  //Modified version of Nitesh's solution on StackOverflow (https://stackoverflow.com/questions/66181115/flutter-polyline-distance-with-google-maps-flutter-plugin)
+  double calculateDistance(List<LatLng> polyline) {
+    double totalDistance = 0;
+    for (int i = 0; i < polyline.length; i++) {
+      if (i < polyline.length - 1) { // skip the last index
+        totalDistance += Point(polyline[i + 1].latitude, polyline[i + 1].longitude).distanceTo(Point(polyline[i].latitude, polyline[i].longitude));
+      }
+    }
+    return totalDistance;
+  }
+
   dynamic getRouteBounds (List<LatLng> routeCoords) {
     //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
     double minLat = routeCoords.first.latitude;
@@ -133,6 +144,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
             }
 
             List<LatLng> routeCoords = [];
+            List<double> elevations = [];
             List<Map>? receivedMaps = allData.data?[1]; 
             late List<Map> samples;
 
@@ -146,7 +158,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
               for (var i = 0; i < samples.length; i ++) {
                   LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
                   routeCoords.add(coord);
+                  elevations.add(samples[i]['elevation']);
                 }
+              elevations.sort();
             }
 
             late dynamic bounds; 
@@ -156,6 +170,14 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
             } else {
               bounds = -1;
             }
+
+            Polyline trace = Polyline(
+                            points: routeCoords,
+                            color: Colors.blue,
+                            strokeWidth: 5,
+                            );
+            
+            double traceDist = calculateDistance(routeCoords);
 
             return SingleChildScrollView(
               child: Column(
@@ -231,11 +253,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                           alignPositionOnUpdate: AlignOnUpdate.always,
                         ),
                         PolylineLayer(
-                          polylines: routeCoords.isNotEmpty ? [Polyline(
-                            points: routeCoords,
-                            color: Colors.blue,
-                            strokeWidth: 5,
-                            )] :
+                          polylines: routeCoords.isNotEmpty ? [trace] :
                           <Polyline<Object>> []),
                         RichAttributionWidget(attributions: [
                           TextSourceAttribution('OpenStreetMap contributors')
@@ -264,8 +282,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                       padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Column(
                           children: [
+                            Icon(Icons.route),
                             Text('Distance'),
-                            Text('0 km', //TODO: Add function to get distance from polyline
+                            Text('${traceDist.toStringAsFixed(2)} km', //TODO: Add function to get distance from polyline
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -278,8 +297,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                       padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Column(
                         children: [
+                          Icon(Icons.terrain),
                           Text('Max Elevation'),
-                          Text('0 ft', //TODO: Add function to get max elevation from samples
+                          Text('${elevations.isNotEmpty ? elevations.last : 0} ft',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -292,8 +312,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                       padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Column(
                         children: [
+                          Icon(Icons.timeline),
                           Text('Data samples'),
-                          Text('0', // TODO: Add sample count from db sample table
+                          Text('${samples.length}', // TODO: Add sample count from db sample table
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
