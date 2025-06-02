@@ -49,7 +49,7 @@ class _EnterHikeState extends State<EnterHike> {
                       )
             ),
             TextButton(onPressed: () {
-                    devOnly();
+                    //devOnly();
                   }, child: Text('DEV ONLY'))
           ],
         ),

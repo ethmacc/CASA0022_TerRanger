@@ -58,6 +58,11 @@ class _SampleDetailState extends State<SampleDetail> {
     List aft = [];
     List<double> accData = [];
 
+    vmath.Vector3 xAxis = vmath.Vector3(1.0, 0.0, 0.0);
+    vmath.Vector3 yAxis = vmath.Vector3(1.0, 0.0, 0.0);
+    vmath.Vector3 zAxis = vmath.Vector3(1.0, 0.0, 0.0);
+
+
     //List of precompmuted vectors from Jupyter notebook
     List<vmath.Vector3> sensorVectors = [
       vmath.Vector3(-0.09379656,  0.63931437, -0.76320334),
@@ -170,7 +175,7 @@ class _SampleDetailState extends State<SampleDetail> {
               bounds = getRouteBounds(routeCoords);
             } else {
               bounds = -1;
-            };
+            }
 
             return SingleChildScrollView(child: 
               Center(
@@ -193,7 +198,7 @@ class _SampleDetailState extends State<SampleDetail> {
                   padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 5,
+                    height: MediaQuery.of(context).size.width / 10 * 6,
                     child:  ScatterChart(
                       ScatterChartData(
                         scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
@@ -246,7 +251,7 @@ class _SampleDetailState extends State<SampleDetail> {
                   value: selected, 
                   onChanged: (double value) {
                     setState(() {
-                      debugPrint('${value}');
+                      debugPrint('$value');
                       selected = value;
                     });
                   },

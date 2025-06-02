@@ -91,23 +91,23 @@ class ConnManager extends ChangeNotifier {
           int decodedInt = byteData.getUint16(i, Endian.little);
           decoded.add(decodedInt);
         }
-        debugPrint('Data: $bytes');
+        debugPrint('Decoded: $bytes');
         if (activeHikeId != -1) {
-          debugPrint('Active Hike: $activeHikeId Decoded: $decoded');
           int newSampleId = await getLatestID('samples');
-          Position currentPosition = await Geolocator.getCurrentPosition(
-            locationSettings: LocationSettings(accuracy: LocationAccuracy.best)
-          );
-          insertSample(
-            Sample(
-              id: newSampleId, 
-              hikeId: activeHikeId, 
-              tofData: '$decoded', 
-              lat: currentPosition.latitude, 
-              long: currentPosition.longitude,
-              elevation: currentPosition.altitude,
-              )
+          Position? currentPosition = await Geolocator.getLastKnownPosition();
+          debugPrint('$currentPosition');
+          if (currentPosition != null) {
+            insertSample(
+              Sample(
+                id: newSampleId, 
+                hikeId: activeHikeId, 
+                tofData: '$decoded', 
+                lat: currentPosition.latitude, 
+                long: currentPosition.longitude,
+                elevation: currentPosition.altitude,
+                )
             );
+          }
         } else {
           debugPrint('No hike is active, data not captured');
         }

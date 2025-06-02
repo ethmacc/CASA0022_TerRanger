@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
+import 'dart:async';
 
 class HikeDetail extends StatefulWidget {
   const HikeDetail({super.key, required this.hikeID, required this.initialMaps, required this.initalHike});
@@ -23,12 +24,37 @@ class HikeDetail extends StatefulWidget {
 
 class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
   late MapController _mapController;
-  late Position initialPos;
 
   @override
   void initState() {
     super.initState();
+    initLocation();
     _mapController = MapController();
+  }
+
+  void initLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled (from geolocator docs https://pub.dev/packages/geolocator).
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately. 
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+    }
   }
 
   //Modified version of Nitesh's solution on StackOverflow (https://stackoverflow.com/questions/66181115/flutter-polyline-distance-with-google-maps-flutter-plugin)
@@ -133,7 +159,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
       body: FutureBuilder(
         future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
         builder: (context, allData) {
-            ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
+            ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
             bool isHikeActive = connManager.isHikeActive(widget.hikeID);
 
             late Map hikeData;
@@ -239,7 +265,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                     child: FlutterMap(
                       options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
                         initialCenter: LatLng(51.5, 0.127),
-                        initialZoom: 9,
+                        initialZoom: 12,
                       ) :
                       MapOptions(
                         initialCameraFit: CameraFit.bounds(bounds: bounds),
@@ -279,12 +305,12 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
                       child: Column(
                           children: [
                             Icon(Icons.route),
                             Text('Distance'),
-                            Text('${traceDist.toStringAsFixed(2)} km', //TODO: Add function to get distance from polyline
+                            Text('${traceDist.toStringAsFixed(2)} km',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -294,12 +320,12 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                         ),
                       ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
                       child: Column(
                         children: [
                           Icon(Icons.terrain),
                           Text('Max Elevation'),
-                          Text('${elevations.isNotEmpty ? elevations.last : 0} ft',
+                          Text('${elevations.isNotEmpty ? elevations.last.toStringAsFixed(2) : 0} ft',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -309,7 +335,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                       )
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
                       child: Column(
                         children: [
                           Icon(Icons.timeline),
@@ -343,32 +369,13 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                               )
                       ),
                 TextButton(//TODO: remove test button and switch data receive control to conn_manager
-                              onPressed: () async {
-                                Position currentPosition = await Geolocator.getCurrentPosition(
-                                  locationSettings: LocationSettings(accuracy: LocationAccuracy.best)
-                                );
-                                debugPrint('altitude: ${currentPosition.altitude}');
-                                int newSampleId = await getLatestID('samples');
-                                if (connManager.getActiveHikeId != -1){
-                                  setState(() {
-                                    insertSample(
-                                      Sample(
-                                        id: newSampleId, 
-                                        hikeId: widget.hikeID, 
-                                        tofData: '[794, 723, 287, 269, 880, 792, 716, 206, 1001, 194, 178, 180, 1330, 1014, 181, 166, 617, 681, 734, 808, 668, 745, 797, 875, 253, 792, 859, 952, 229, 778, 857, 325, 0, 0, 100]',
-                                        lat: currentPosition.latitude,
-                                        long:currentPosition.longitude,
-                                        elevation:  currentPosition.altitude,
-                                        )
-                                      );
-                                  });
-                                }
+                              onPressed: () {
                               }, 
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
                                 foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
                                 ),
-                              child: Text('TEST: add position'),
+                              child: Text('TEST'),
                               )
                   ],
                 )
