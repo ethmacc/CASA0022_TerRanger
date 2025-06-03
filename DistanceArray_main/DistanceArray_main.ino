@@ -23,7 +23,7 @@ int imageWidth = 0; //Used to pretty print output
 int buttonState = 0;
 
 // Bluetooth® Low Energy Service
-#define BUFFER_SIZE ( (res * 2 ) + 3) * 2 // Buffer size is resolution x 2 sensors x 2 bytes plus 3 * 2 bytes for acc data
+#define BUFFER_SIZE ( (res * 2 ) + 2) * 2 // Buffer size is resolution x 2 sensors x 2 bytes plus 2 * 2 bytes for acc data
 BLEService tofService = BLEService("185B");
 BLECharacteristic tofChar = BLECharacteristic("2C0A", BLERead | BLENotify, BUFFER_SIZE, false); 
 
@@ -104,26 +104,33 @@ void loop()
 
            if (IMU.accelerationAvailable()) {
             IMU.readAcceleration(accX, accY, accZ);
-            
           }
 
-          uint16_t roundX = round(accX * 100.0);
-          uint16_t roundY = round(accY * 100.0);
-          uint16_t roundZ = round(accZ * 100.0);
+          float consX = constrain(accX, -1.0, 1.0);
+          float consY = constrain(accY, -1.0, 1.0);
+          float consZ = constrain(accZ, -1.0, 1.0);
 
-          Serial.println(roundX);
-          Serial.println(roundY);
-          Serial.println(roundZ);
-          
-          uint16_t acc_data[3] = {roundX, roundY, roundZ};
+          int roll = calculateRoll(consX, consY, consZ);
+          int pitch  = calculatePitch(consX, consY, consZ);
+
+          Serial.println(roll);
+          Serial.println(pitch);
+
+          uint16_t roll16 = uint16_t(roll + 180);
+          uint16_t pitch16 = uint16_t(pitch + 180);
+
+          Serial.println(roll16);
+          Serial.println(pitch16);
+            
+          uint16_t acc_data[2] = {roll16, pitch16};
 
           uint16_t * combined_tof = new uint16_t[res * 2];
           std::copy(measurementData_1.distance_mm, measurementData_1.distance_mm + res, combined_tof);
           std::copy(measurementData_2.distance_mm, measurementData_2.distance_mm + res, combined_tof + res);
 
-          uint16_t * all_data = new uint16_t[(res * 2) + 3];
+          uint16_t * all_data = new uint16_t[(res * 2) + 2];
           std::copy(combined_tof, combined_tof + (res * 2), all_data);
-          std::copy(acc_data, acc_data + 3, all_data + (res * 2));
+          std::copy(acc_data, acc_data + 2, all_data + (res * 2));
           
           tofChar.writeValue(all_data, BUFFER_SIZE);
           pressTime = millis();
@@ -146,13 +153,21 @@ void loop()
         IMU.readAcceleration(accX, accY, accZ);
       }
 
-        uint16_t roundX = round(accX * 100.0);
-        uint16_t roundY = round(accY * 100.0);
-        uint16_t roundZ = round(accZ * 100.0);
+        float consX = constrain(accX, -1.0, 1.0);
+        float consY = constrain(accY, -1.0, 1.0);
+        float consZ = constrain(accZ, -1.0, 1.0);
 
-        uint16_t acc_data[3] = {roundX, roundY, roundZ};
+        int roll = calculateRoll(consX, consY, consZ);
+        int pitch  = calculatePitch(consX, consY, consZ);
 
-        Serial.println(acc_data[0]);
+        Serial.println(roll);
+        Serial.println(pitch);
+
+        uint16_t roll16 = uint16_t(roll + 180);
+        uint16_t pitch16 = uint16_t(pitch + 180);
+
+        Serial.println(roll16);
+        Serial.println(pitch16);
 
       pressTime = millis();
     }
@@ -251,4 +266,12 @@ void initialiseToF (int cam) {
   //Ensure all sensors awake
   digitalWrite(LPn_1, HIGH);
   digitalWrite(LPn_2, HIGH);
+}
+
+int calculateRoll(float x, float y, float z) {
+  return atan2(y , z) * 57.3;
+}
+
+int calculatePitch(float x, float y, float z) {
+  return atan2((- x) , sqrt(y * y + z * z)) * 57.3;
 }

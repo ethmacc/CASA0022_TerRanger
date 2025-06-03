@@ -91,7 +91,7 @@ class ConnManager extends ChangeNotifier {
           int decodedInt = byteData.getUint16(i, Endian.little);
           decoded.add(decodedInt);
         }
-        debugPrint('Decoded: $bytes');
+        debugPrint('Decoded: $decoded');
         if (activeHikeId != -1) {
           int newSampleId = await getLatestID('samples');
           Position? currentPosition = await Geolocator.getLastKnownPosition();

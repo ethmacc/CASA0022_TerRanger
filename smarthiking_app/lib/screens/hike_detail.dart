@@ -138,6 +138,13 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
       }
     }
 
+  Future<void> _handleRefresh() async {
+    // Simulate network fetch or database query
+    await Future.delayed(Duration(seconds: 2));
+    // Update the list of items and refresh the UI
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,234 +163,228 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
         child: Icon(Icons.add)
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      body: FutureBuilder(
-        future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
-        builder: (context, allData) {
-            ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
-            bool isHikeActive = connManager.isHikeActive(widget.hikeID);
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh, // from https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize
+        child: FutureBuilder(
+          future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
+          builder: (context, allData) {
+              ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
+              bool isHikeActive = connManager.isHikeActive(widget.hikeID);
 
-            late Map hikeData;
-            if (allData.data?[0] != null) {
-              hikeData = Map.from(allData.data?[0][0] as Map<Object?, Object?>); //default to inital hike map received on navigator push
-            } else {
-              hikeData = widget.initalHike;
-            }
+              late Map hikeData;
+              if (allData.data?[0] != null) {
+                hikeData = Map.from(allData.data?[0][0] as Map<Object?, Object?>); //default to inital hike map received on navigator push
+              } else {
+                hikeData = widget.initalHike;
+              }
 
-            List<LatLng> routeCoords = [];
-            List<double> elevations = [];
-            List<Map>? receivedMaps = allData.data?[1]; 
-            late List<Map> samples;
+              List<LatLng> routeCoords = [];
+              List<double> elevations = [];
+              List<Map>? receivedMaps = allData.data?[1]; 
+              late List<Map> samples;
 
-            if (receivedMaps != null) {
-              samples = receivedMaps;
-            } else {
-              samples = widget.initialMaps; //default to the initalMaps list received on navigator push
-            }
-            
-            if (samples.isNotEmpty) {
-              for (var i = 0; i < samples.length; i ++) {
-                  LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
-                  routeCoords.add(coord);
-                  elevations.add(samples[i]['elevation']);
-                }
-              elevations.sort();
-            }
+              if (receivedMaps != null) {
+                samples = receivedMaps;
+              } else {
+                samples = widget.initialMaps; //default to the initalMaps list received on navigator push
+              }
+              
+              if (samples.isNotEmpty) {
+                for (var i = 0; i < samples.length; i ++) {
+                    LatLng coord = LatLng(samples[i]['lat'], samples[i]['long']);
+                    routeCoords.add(coord);
+                    elevations.add(samples[i]['elevation']);
+                  }
+                elevations.sort();
+              }
 
-            late dynamic bounds; 
+              late dynamic bounds; 
 
-            if (routeCoords.length > 1) {
-              bounds = getRouteBounds(routeCoords);
-            } else {
-              bounds = -1;
-            }
+              if (routeCoords.length > 1) {
+                bounds = getRouteBounds(routeCoords);
+              } else {
+                bounds = -1;
+              }
 
-            Polyline trace = Polyline(
-                            points: routeCoords,
-                            color: Colors.blue,
-                            strokeWidth: 5,
-                            );
-            
-            double traceDist = calculateDistance(routeCoords);
+              Polyline trace = Polyline(
+                              points: routeCoords,
+                              color: Colors.blue,
+                              strokeWidth: 5,
+                              );
+              
+              double traceDist = calculateDistance(routeCoords);
 
-            return SingleChildScrollView(
-              child: Column(
-              children: [
-                isHikeActive ? ListTile(
-                  leading: Icon(Icons.radio_button_checked, 
-                    color: Colors.red,), 
-                  title: Text('This hike is currently active'),
-                  trailing: TextButton(onPressed: () {
-                    connManager.deactivateHike();
-                    if (routeCoords.length > 1) {
-                      moveMapToRouteBounds(routeCoords);
-                    }
-                    setState(() {
-                      isHikeActive = connManager.isHikeActive(widget.hikeID);
-                    });
-                  }, child: Text('deactivate')),
-                  ) : 
-                ListTile(
-                  leading: Icon(Icons.radio_button_unchecked,
-                    color: Colors.grey,
+              return SingleChildScrollView(
+                child: Column(
+                children: [
+                  isHikeActive ? ListTile(
+                    leading: Icon(Icons.radio_button_checked, 
+                      color: Colors.red,), 
+                    title: Text('This hike is currently active'),
+                    trailing: TextButton(onPressed: () {
+                      connManager.deactivateHike();
+                      if (routeCoords.length > 1) {
+                        moveMapToRouteBounds(routeCoords);
+                      }
+                      setState(() {
+                        isHikeActive = connManager.isHikeActive(widget.hikeID);
+                      });
+                    }, child: Text('deactivate')),
+                    ) : 
+                  ListTile(
+                    leading: Icon(Icons.radio_button_unchecked,
+                      color: Colors.grey,
+                    ),
+                    title: Text('This hike is not active'),
+                    trailing: TextButton(onPressed: () {
+                      connManager.activateHike(widget.hikeID);
+                      setState(() {
+                        isHikeActive = connManager.isHikeActive(widget.hikeID);
+                      });
+                    }, child: Text('activate')),
                   ),
-                  title: Text('This hike is not active'),
-                  trailing: TextButton(onPressed: () {
-                    connManager.activateHike(widget.hikeID);
-                    setState(() {
-                      isHikeActive = connManager.isHikeActive(widget.hikeID);
-                    });
-                  }, child: Text('activate')),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                    child:  Text(
-                      '${hikeData['name']}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 32.0,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      child:  Text(
+                        '${hikeData['name']}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 32.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
-                    child:  Text(
-                      'Start Date & Time: ${hikeData['date']}',
-                      style: TextStyle(
-                        fontSize: 15.0,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
+                      child:  Text(
+                        'Start Date & Time: ${hikeData['date']}',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
-                    width: MediaQuery.of(context).size.width / 10 * 9,
-                    child: FlutterMap(
-                      options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
-                        initialCenter: LatLng(51.5, 0.127),
-                        initialZoom: 12,
-                      ) :
-                      MapOptions(
-                        initialCameraFit: CameraFit.bounds(bounds: bounds),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height / 3,
+                      width: MediaQuery.of(context).size.width / 10 * 9,
+                      child: FlutterMap(
+                        options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
+                          initialCenter: LatLng(51.5, 0.127),
+                          initialZoom: 12,
+                        ) :
+                        MapOptions(
+                          initialCameraFit: CameraFit.bounds(bounds: bounds),
+                        ),
+                        mapController: _mapController,
+                        children: isHikeActive ? [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          ),
+                          CurrentLocationLayer(
+                            alignPositionOnUpdate: AlignOnUpdate.always,
+                          ),
+                          PolylineLayer(
+                            polylines: routeCoords.isNotEmpty ? [trace] :
+                            <Polyline<Object>> []),
+                          RichAttributionWidget(attributions: [
+                            TextSourceAttribution('OpenStreetMap contributors')
+                          ])
+                        ] : [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          ),
+                          PolylineLayer(
+                            polylines: routeCoords.isNotEmpty ? [Polyline(
+                              points: routeCoords,
+                              color: Colors.blue,
+                              strokeWidth: 5,
+                              )] :
+                            <Polyline<Object>> []),
+                          RichAttributionWidget(attributions: [
+                            TextSourceAttribution('OpenStreetMap contributors')
+                          ])
+                        ],
                       ),
-                      mapController: _mapController,
-                      children: isHikeActive ? [
-                        TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        ),
-                        CurrentLocationLayer(
-                          alignPositionOnUpdate: AlignOnUpdate.always,
-                        ),
-                        PolylineLayer(
-                          polylines: routeCoords.isNotEmpty ? [trace] :
-                          <Polyline<Object>> []),
-                        RichAttributionWidget(attributions: [
-                          TextSourceAttribution('OpenStreetMap contributors')
-                        ])
-                      ] : [
-                        TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        ),
-                        PolylineLayer(
-                          polylines: routeCoords.isNotEmpty ? [Polyline(
-                            points: routeCoords,
-                            color: Colors.blue,
-                            strokeWidth: 5,
-                            )] :
-                          <Polyline<Object>> []),
-                        RichAttributionWidget(attributions: [
-                          TextSourceAttribution('OpenStreetMap contributors')
-                        ])
-                      ],
                     ),
-                  ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child: Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: Column(
+                            children: [
+                              Icon(Icons.route),
+                              Text('Distance'),
+                              Text('${traceDist.toStringAsFixed(2)} km',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                              )
+                            ],
+                          ),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: Column(
                           children: [
-                            Icon(Icons.route),
-                            Text('Distance'),
-                            Text('${traceDist.toStringAsFixed(2)} km',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                            )
+                            Icon(Icons.terrain),
+                            Text('Max Elevation'),
+                            Text('${elevations.isNotEmpty ? elevations.last.toStringAsFixed(2) : 0} ft',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                              )
                           ],
+                        )
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: Column(
+                          children: [
+                            Icon(Icons.timeline),
+                            Text('Data samples'),
+                            Text('${samples.length}', // TODO: Add sample count from db sample table
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                  ),
+                              ),
+                          ],
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 40),
+                      child:
+                      TextButton(
+                                onPressed: () async {
+                                  List<Map> allSamples = await getSamplesByID(widget.hikeID);
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID, initialSamples: allSamples,)));
+                                }, 
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
+                                  foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
+                                  ),
+                                child: Text('View data samples >'),
+                                )
                         ),
-                      ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child: Column(
-                        children: [
-                          Icon(Icons.terrain),
-                          Text('Max Elevation'),
-                          Text('${elevations.isNotEmpty ? elevations.last.toStringAsFixed(2) : 0} ft',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                            )
-                        ],
-                      )
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child: Column(
-                        children: [
-                          Icon(Icons.timeline),
-                          Text('Data samples'),
-                          Text('${samples.length}', // TODO: Add sample count from db sample table
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                            ),
-                        ],
-                      )
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child:
-                    TextButton(
-                              onPressed: () async {
-                                List<Map> allSamples = await getSamplesByID(widget.hikeID);
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID, initialSamples: allSamples,)));
-                              }, 
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
-                                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
-                                ),
-                              child: Text('View data samples >'),
-                              )
-                      ),
-                TextButton(//TODO: remove test button and switch data receive control to conn_manager
-                              onPressed: () {
-                              }, 
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
-                                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
-                                ),
-                              child: Text('TEST'),
-                              )
-                  ],
-                )
-              ],
-            )
-            );
-          }
-        ),
+                    ],
+                  )
+                ],
+              )
+              );
+            }
+          ),
+        )
       );
     }
 }

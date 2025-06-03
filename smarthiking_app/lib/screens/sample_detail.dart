@@ -56,12 +56,10 @@ class _SampleDetailState extends State<SampleDetail> {
     List midFore = [];
     List midAft = [];
     List aft = [];
-    List<double> accData = [];
+    List<int> accData = [];
 
     vmath.Vector3 xAxis = vmath.Vector3(1.0, 0.0, 0.0);
-    vmath.Vector3 yAxis = vmath.Vector3(1.0, 0.0, 0.0);
-    vmath.Vector3 zAxis = vmath.Vector3(1.0, 0.0, 0.0);
-
+    vmath.Vector3 yAxis = vmath.Vector3(0.0, 1.0, 0.0);
 
     //List of precompmuted vectors from Jupyter notebook
     List<vmath.Vector3> sensorVectors = [
@@ -100,16 +98,25 @@ class _SampleDetailState extends State<SampleDetail> {
     ];
     
     for (int i=0; i < dataList.length; i++) {
-      if (i < dataList.length - 3) {
+      if (i < dataList.length - 2) {
         scaledList.add(sensorVectors[i]); //seperate out tof sensor data from accelerometer data
       } else {
-        accData.add(dataList[i].toDouble() / 100.0); //convert accelerometer data back to floating point values
+        accData.add(dataList[i] - 180); //convert accelerometer data back to correct pitch and roll values
       }
     }
-    for (int i=0; i < dataList.length - 3; i++) {
+    for (int i=0; i < dataList.length - 2; i++) {
       scaledList[i].scale(dataList[i].toDouble()); //scale vectors using tofdata
-      //TODO: rotate vectors using IMU data
-      final point = (scaledList[i].x, scaledList[i].z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
+      //rotate vectors using IMU data
+      double rotX = vmath.radians(((accData[0] + 90) * -1).toDouble());
+      double rotY = vmath.radians(accData[1].toDouble());
+      vmath.Quaternion quartX = vmath.Quaternion.axisAngle(xAxis, rotX);
+      vmath.Quaternion quartY = vmath.Quaternion.axisAngle(yAxis, rotY);
+      if(i==0)debugPrint('${scaledList[i]}');
+      vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
+      vmath.Vector3 finalVect = quartY.rotate(newVect);
+      if(i==0)debugPrint('$finalVect');
+
+      final point = (finalVect.x, finalVect.z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
           fore.add(point);
@@ -126,7 +133,16 @@ class _SampleDetailState extends State<SampleDetail> {
     pointList.add(midAft);
     pointList.add(aft);
 
+    debugPrint('$accData');
+
     return pointList;
+  }
+
+  Future<void> _handleRefresh() async {
+    // Simulate network fetch or database query
+    await Future.delayed(Duration(seconds: 2));
+    // Update the list of items and refresh the UI
+    setState(() {});
   }
 
   @override
@@ -147,206 +163,211 @@ class _SampleDetailState extends State<SampleDetail> {
         child: Icon(Icons.add)
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      body: FutureBuilder(
-        future: getSamplesByID(widget.hikeId), 
-        builder: (context, allSamples) {
-          List<LatLng> routeCoords = [];
-          late List<Map> samplesToLoad;
+      body: RefreshIndicator(onRefresh: _handleRefresh, // from https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize,
+        child:FutureBuilder(
+          future: getSamplesByID(widget.hikeId), 
+          builder: (context, allSamples) {
+            List<LatLng> routeCoords = [];
+            late List<Map> samplesToLoad;
 
-          if (allSamples.data != null) {
-            samplesToLoad = List.from(allSamples.data as List);
-          } else {
-            samplesToLoad = widget.initialSamples;
-          }
-
-          if (samplesToLoad.isNotEmpty) {
-            Map selectedSample = samplesToLoad[(selected - 1).floor()];
-            List<List> pointListData = parseAndScalePts(selectedSample['tofData']);
-            debugPrint('Parsed data!');
-
-            for (var i = 0; i < samplesToLoad.length; i ++) {
-              LatLng coord = LatLng(samplesToLoad[i]['lat'], samplesToLoad[i]['long']);
-              routeCoords.add(coord);
-            }
-            
-            late dynamic bounds; 
-
-            if (routeCoords.length > 1) {
-              bounds = getRouteBounds(routeCoords);
+            if (allSamples.data != null) {
+              samplesToLoad = List.from(allSamples.data as List);
             } else {
-              bounds = -1;
+              samplesToLoad = widget.initialSamples;
             }
 
-            return SingleChildScrollView(child: 
-              Center(
-              child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: ListTile(
-                    title: Text(
-                      '2D Cross Sections',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 32.0,
-                      ),
-                    ),
-                    subtitle: Text('LiDAR point clouds of ground surface'),
-                  )
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 10 * 9,
-                    height: MediaQuery.of(context).size.width / 10 * 6,
-                    child:  ScatterChart(
-                      ScatterChartData(
-                        scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
-                          final (double x, double y, double size) = e.value;
-                          return ScatterSpot(
-                            x,
-                            y,
-                          );
-                        }).toList(),
-                        maxX: 900.0,
-                        minX: -900.0,
-                        maxY: 900.0,
-                        minY: 0,
-                        titlesData: FlTitlesData(
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          bottomTitles: AxisTitles(sideTitles: SideTitles(minIncluded: false, maxIncluded: false, showTitles: true, reservedSize: 24)),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: true,maxIncluded: false, reservedSize: 36))
-                        ) 
-                      )
-                    )
-                  )
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  IconButton(
-                    onPressed: () {
-                      if (selectedSection > 0) {
-                        setState(() {
-                          selectedSection -= 1;
-                        });
-                      }
-                    }, 
-                    icon: Icon(Icons.chevron_left)
-                  ),
-                  Text('Selected Section: ${sectionTypes[selectedSection]}'),
-                  IconButton(
-                    onPressed: () {
-                      if (selectedSection < 3) {
-                        setState(() {
-                          selectedSection += 1;
-                        });
-                      }
-                    }, 
-                    icon: Icon(Icons.chevron_right)
-                  ),
-                ],),
-                Slider(
-                  value: selected, 
-                  onChanged: (double value) {
-                    setState(() {
-                      debugPrint('$value');
-                      selected = value;
-                    });
-                  },
-                  min: 1,
-                  max: samplesToLoad.length.toDouble(),
-                  divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Text('Selected sample'),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                        child: Text('${selected.floor()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 22),
-                        ),
-                      )
-                    ]
-                  ),
-                  Column(children: [
-                    Padding(
+            if (samplesToLoad.isNotEmpty) {
+              Map selectedSample = samplesToLoad[(selected - 1).floor()];
+              List<List> pointListData = parseAndScalePts(selectedSample['tofData']);
+
+              for (var i = 0; i < samplesToLoad.length; i ++) {
+                LatLng coord = LatLng(samplesToLoad[i]['lat'], samplesToLoad[i]['long']);
+                routeCoords.add(coord);
+              }
+              
+              late dynamic bounds; 
+
+              if (routeCoords.length > 1) {
+                bounds = getRouteBounds(routeCoords);
+              } else {
+                bounds = -1;
+              }
+
+              return SingleChildScrollView(child: 
+                Center(
+                child: Column(
+                children: [
+                  Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Text('No. of samples')
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                    child: Text('${samplesToLoad.length}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 22),
+                    child: ListTile(
+                      title: Text(
+                        '2D Cross Sections',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 32.0,
+                        ),
+                      ),
+                      subtitle: Text('LiDAR point clouds of ground surface'),
                     )
                   ),
-                  ],)
-                ]
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width / 10 * 5,
+                      child:  ScatterChart(
+                        ScatterChartData(
+                          scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
+                            final (double x, double y, double size) = e.value;
+                            return ScatterSpot(
+                              x,
+                              y,
+                            );
+                          }).toList(),
+                          maxX: 1000.0,
+                          minX: -1000.0,
+                          maxY: 1000.0,
+                          minY: 0,
+                          titlesData: FlTitlesData(
+                            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            bottomTitles: AxisTitles(sideTitles: SideTitles(minIncluded: false, maxIncluded: false, showTitles: true, reservedSize: 24, interval: 200.0)),
+                            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: true,maxIncluded: false, reservedSize: 36, interval: 100.0))
+                          ),
+                          gridData: FlGridData(
+                            horizontalInterval: 100.0,
+                            verticalInterval: 100.0,
+                          )
+                        )
+                      )
+                    )
                   ),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
-                    width: MediaQuery.of(context).size.width / 10 * 8,
-                    child: FlutterMap(
-                      options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
-                        initialCenter: LatLng(51.5, 0.127),
-                        initialZoom: 9,
-                      ) :
-                      MapOptions(
-                        initialCameraFit: CameraFit.bounds(bounds: bounds),
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        ),
-                        MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
-                        PolylineLayer(
-                          polylines: routeCoords.isNotEmpty ? [Polyline(
-                            points: routeCoords,
-                            color: Colors.blue,
-                            strokeWidth: 5,
-                            )] :
-                          <Polyline<Object>> []),
-                        RichAttributionWidget(attributions: [
-                          TextSourceAttribution('OpenStreetMap contributors')
-                        ])
-                      ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    IconButton(
+                      onPressed: () {
+                        if (selectedSection > 0) {
+                          setState(() {
+                            selectedSection -= 1;
+                          });
+                        }
+                      }, 
+                      icon: Icon(Icons.chevron_left)
                     ),
+                    Text('Selected Section: ${sectionTypes[selectedSection]}'),
+                    IconButton(
+                      onPressed: () {
+                        if (selectedSection < 3) {
+                          setState(() {
+                            selectedSection += 1;
+                          });
+                        }
+                      }, 
+                      icon: Icon(Icons.chevron_right)
+                    ),
+                  ],),
+                  Slider(
+                    value: selected, 
+                    onChanged: (double value) {
+                      setState(() {
+                        debugPrint('$value');
+                        selected = value;
+                      });
+                    },
+                    min: 1,
+                    max: samplesToLoad.length.toDouble(),
+                    divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: Text('Selected sample'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                          child: Text('${selected.floor()}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22),
+                          ),
+                        )
+                      ]
+                    ),
+                    Column(children: [
+                      Padding(
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Text('No. of samples')
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                      child: Text('${samplesToLoad.length}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22),
+                      )
+                    ),
+                    ],)
+                  ]
                   ),
                   Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 50),
-                ),
-              ],
-            )
-            )
-            );
-          } else {
-            return Center(
-              child:
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('No samples logged yet'),
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height / 3,
+                      width: MediaQuery.of(context).size.width / 10 * 8,
+                      child: FlutterMap(
+                        options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
+                          initialCenter: LatLng(51.5, 0.127),
+                          initialZoom: 9,
+                        ) :
+                        MapOptions(
+                          initialCameraFit: CameraFit.bounds(bounds: bounds),
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          ),
+                          MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
+                          PolylineLayer(
+                            polylines: routeCoords.isNotEmpty ? [Polyline(
+                              points: routeCoords,
+                              color: Colors.blue,
+                              strokeWidth: 5,
+                              )] :
+                            <Polyline<Object>> []),
+                          RichAttributionWidget(attributions: [
+                            TextSourceAttribution('OpenStreetMap contributors')
+                          ])
+                        ],
+                      ),
+                    ),
+                    Padding(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 50),
+                  ),
                 ],
               )
+              )
               );
-          }      
-        }
-      ),
+            } else {
+              return Center(
+                child:
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('No samples logged yet'),
+                  ],
+                )
+                );
+            }      
+          }
+        ),
+      )
     );
   }
 }
