@@ -137,19 +137,5 @@ Future<List<Map>> getAllData (String tableName) async {
   return maps;
 }
 
-void devOnly () async {
-  //Dev only function for manipulating the database
-  final db = await openHikingDataBase();
-  db.execute(
-        'ALTER TABLE samples ADD elevation FLOAT'
-      );
-  db.execute(
-    'ALTER TABLE hikes DROP COLUMN distance'
-  );
-  db.execute(
-    'ALTER TABLE hikes DROP COLUMN elevation'
-  );
-}
-  
 
 

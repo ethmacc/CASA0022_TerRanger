@@ -377,33 +377,6 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                                 child: Text('View data samples >'),
                                 )
                         ),
-                      Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 40),
-                      child:
-                      TextButton(
-                                onPressed: () async {
-                                  int newSampleId = await getLatestID('samples');
-                                  Position? currentPosition = await Geolocator.getLastKnownPosition();
-                                  int activeHikeId = connManager.getActiveHikeId;
-                                  if (currentPosition != null){
-                                    insertSample(
-                                      Sample(
-                                        id: newSampleId, 
-                                        hikeId: activeHikeId, 
-                                        tofData: '[907, 875, 812, 751, 1019, 935, 878, 807, 1152, 1016, 922, 865, 1301, 1100, 798, 779, 754, 815, 877, 914, 812, 887, 955, 993, 877, 952, 1026, 1107, 947, 944, 906, 940, 90, 180]',                                        lat: currentPosition.latitude, 
-                                        long: currentPosition.longitude,
-                                        elevation: currentPosition.altitude,
-                                        )
-                                    );
-                                  }
-                                  
-                                }, 
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll<Color>(Colors.red),
-                                  foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
-                                  ),
-                                child: Text('DEV ONLY'),
-                                )
-                        ),
                     ],
                   ),
                   

@@ -30,6 +30,7 @@ class _SampleDetailState extends State<SampleDetail> {
 
   double selected = 1.0;
   int selectedSection = 0;
+  List<Color> dotColours = [Colors.red,Colors.orange, Colors.yellow, Colors.green];
   List<String> sectionTypes = ['Fore', 'Mid-Fore', 'Mid-Aft', 'Aft'];
 
   dynamic getRouteBounds (List<LatLng> routeCoords) {
@@ -121,22 +122,23 @@ class _SampleDetailState extends State<SampleDetail> {
       double rotY = vmath.radians(accData[1].toDouble());
       vmath.Quaternion quartX = vmath.Quaternion.axisAngle(xAxis, rotX);
       vmath.Quaternion quartY = vmath.Quaternion.axisAngle(yAxis, rotY);
-      if(i==0)debugPrint('${scaledList[i]}');
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
-      if(i==0)debugPrint('$finalVect');
-      figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.red));
 
       final point = (finalVect.x, finalVect.z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
           fore.add(point);
+          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.red));
         case 1 || 5 || 9 || 13 || 18 || 22 || 26 || 30: //indices corresponding to midfore section
           midFore.add(point);
+          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.orange));
         case 2 || 6 || 10 || 14 || 17 || 21 || 25 ||29: //etc
           midAft.add(point);
+          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.yellow));
         case 3 || 7 || 11 || 15 || 16 || 20 || 24 || 28: //etc
           aft.add(point);
+          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.green));
       }
     }
     pointList.add(fore);
@@ -158,12 +160,12 @@ class _SampleDetailState extends State<SampleDetail> {
 
   @override
   Widget build(BuildContext context) {
-    controller.update(userScale: 1.5);
+    controller.update(userScale: 2);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Erosion Sampling'),
+        title: Text('Sample Data Viewer'),
       ),
       bottomNavigationBar: BottomNavbar(),
       floatingActionButton: FloatingActionButton(
@@ -220,7 +222,7 @@ class _SampleDetailState extends State<SampleDetail> {
                         'Sample Data Viewer',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 32.0,
+                          fontSize: 28.0,
                         ),
                       ),
                       subtitle: Text('LiDAR point clouds of ground surface'),
@@ -228,7 +230,7 @@ class _SampleDetailState extends State<SampleDetail> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                    child: Text('Select a sample:', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    child: Text('Selected sample: ${selected.floor()} of ${samplesToLoad.length}', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
                   Slider(
                     value: selected, 
@@ -242,47 +244,12 @@ class _SampleDetailState extends State<SampleDetail> {
                     max: samplesToLoad.length.toDouble(),
                     divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Text('Selected sample'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                          child: Text('${selected.floor()}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22),
-                          ),
-                        )
-                      ]
-                    ),
-                    Column(children: [
-                      Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Text('No. of samples')
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                      child: Text('${samplesToLoad.length}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22),
-                      )
-                    ),
-                    ],)
-                  ]
-                  ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
                     child: Text('3D Point Cloud', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height / 10 * 3,
+                    height: MediaQuery.of(context).size.width / 10 * 6,
                     width: MediaQuery.of(context).size.width / 10 * 9,
                     child: DiTreDiDraggable(
                       controller: controller,
@@ -307,6 +274,7 @@ class _SampleDetailState extends State<SampleDetail> {
                             return ScatterSpot(
                               x,
                               y,
+                              dotPainter: FlDotCirclePainter(color: dotColours[selectedSection])
                             );
                           }).toList(),
                           maxX: 1000.0,
@@ -357,7 +325,7 @@ class _SampleDetailState extends State<SampleDetail> {
                     child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height / 10 * 4,
+                      height: MediaQuery.of(context).size.width / 10 * 4,
                       width: MediaQuery.of(context).size.width / 10 * 8,
                       child: FlutterMap(
                         options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
