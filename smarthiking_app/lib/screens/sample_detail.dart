@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
-import 'package:vector_math/vector_math.dart' as vmath;
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math';
+import 'package:ditredi/ditredi.dart';
+import 'package:vector_math/vector_math_64.dart' as vmath;
 
 class SampleDetail extends StatefulWidget {
   const SampleDetail({super.key, required this.hikeId, required this.initialSamples});
@@ -19,6 +20,14 @@ class SampleDetail extends StatefulWidget {
 }
 
 class _SampleDetailState extends State<SampleDetail> {
+ late DiTreDiController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = DiTreDiController();
+  }
+
   double selected = 1.0;
   int selectedSection = 0;
   List<String> sectionTypes = ['Fore', 'Mid-Fore', 'Mid-Aft', 'Aft'];
@@ -57,6 +66,7 @@ class _SampleDetailState extends State<SampleDetail> {
     List midAft = [];
     List aft = [];
     List<int> accData = [];
+    List<Model3D> figures = [];
 
     vmath.Vector3 xAxis = vmath.Vector3(1.0, 0.0, 0.0);
     vmath.Vector3 yAxis = vmath.Vector3(0.0, 1.0, 0.0);
@@ -115,6 +125,7 @@ class _SampleDetailState extends State<SampleDetail> {
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
       if(i==0)debugPrint('$finalVect');
+      figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.red));
 
       final point = (finalVect.x, finalVect.z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
       switch (i) {
@@ -135,7 +146,7 @@ class _SampleDetailState extends State<SampleDetail> {
 
     debugPrint('$accData');
 
-    return pointList;
+    return [pointList, figures];
   }
 
   Future<void> _handleRefresh() async {
@@ -147,6 +158,8 @@ class _SampleDetailState extends State<SampleDetail> {
 
   @override
   Widget build(BuildContext context) {
+    controller.update(userScale: 1.5);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -178,7 +191,9 @@ class _SampleDetailState extends State<SampleDetail> {
 
             if (samplesToLoad.isNotEmpty) {
               Map selectedSample = samplesToLoad[(selected - 1).floor()];
-              List<List> pointListData = parseAndScalePts(selectedSample['tofData']);
+              List<List> parsed = parseAndScalePts(selectedSample['tofData']);
+              List<List> pointListData = List.from(parsed[0]);
+              List<Model3D> vectorData = List.from(parsed[1]);
 
               for (var i = 0; i < samplesToLoad.length; i ++) {
                 LatLng coord = LatLng(samplesToLoad[i]['lat'], samplesToLoad[i]['long']);
@@ -200,20 +215,90 @@ class _SampleDetailState extends State<SampleDetail> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: ListTile(
+                      leading: Icon(Icons.timeline, size:36),
                       title: Text(
-                        '2D Cross Sections',
+                        'Sample Data Viewer',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 32.0,
                         ),
                       ),
                       subtitle: Text('LiDAR point clouds of ground surface'),
-                    )
+                    ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: Text('Select a sample:', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    ),
+                  Slider(
+                    value: selected, 
+                    onChanged: (double value) {
+                      setState(() {
+                        debugPrint('$value');
+                        selected = value;
+                      });
+                    },
+                    min: 1,
+                    max: samplesToLoad.length.toDouble(),
+                    divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: Text('Selected sample'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                          child: Text('${selected.floor()}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22),
+                          ),
+                        )
+                      ]
+                    ),
+                    Column(children: [
+                      Padding(
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Text('No. of samples')
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
+                      child: Text('${samplesToLoad.length}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22),
+                      )
+                    ),
+                    ],)
+                  ]
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: Text('3D Point Cloud', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 10 * 3,
+                    width: MediaQuery.of(context).size.width / 10 * 9,
+                    child: DiTreDiDraggable(
+                      controller: controller,
+                      child: DiTreDi(
+                      figures: vectorData,
+                      controller: controller,
+                      ),),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: Text('2D Cross Sections', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
+                    ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery.of(context).size.width / 10 * 9,
                       height: MediaQuery.of(context).size.width / 10 * 5,
                       child:  ScatterChart(
                         ScatterChartData(
@@ -266,60 +351,13 @@ class _SampleDetailState extends State<SampleDetail> {
                       }, 
                       icon: Icon(Icons.chevron_right)
                     ),
-                  ],),
-                  Slider(
-                    value: selected, 
-                    onChanged: (double value) {
-                      setState(() {
-                        debugPrint('$value');
-                        selected = value;
-                      });
-                    },
-                    min: 1,
-                    max: samplesToLoad.length.toDouble(),
-                    divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Text('Selected sample'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                          child: Text('${selected.floor()}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22),
-                          ),
-                        )
-                      ]
-                    ),
-                    Column(children: [
-                      Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Text('No. of samples')
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 10, 30),
-                      child: Text('${samplesToLoad.length}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22),
-                      )
-                    ),
-                    ],)
-                  ]
-                  ),
+                  ],),                  
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height / 3,
+                      height: MediaQuery.of(context).size.height / 10 * 4,
                       width: MediaQuery.of(context).size.width / 10 * 8,
                       child: FlutterMap(
                         options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
