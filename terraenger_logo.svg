@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1152"
+   height="460"
+   viewBox="0 0 304.8 121.70833"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="terraenger_logo.svg"
+   inkscape:export-filename="smarthiking_app\assets\terraenger_logo.png"
+   inkscape:export-xdpi="84"
+   inkscape:export-ydpi="84"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.38974818"
+     inkscape:cx="446.44211"
+     inkscape:cy="202.69498"
+     inkscape:window-width="1280"
+     inkscape:window-height="650"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-5.0519995,-18.723902)">
+    <text
+       xml:space="preserve"
+       style="font-size:50.0738px;fill:#80390a;stroke-width:0.264583"
+       x="5.540915"
+       y="99.097015"
+       id="text2"
+       transform="scale(1.000017,0.99998299)"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.0738px;font-family:Bahnschrift;-inkscape-font-specification:Bahnschrift;fill:#333333;stroke-width:0.264583"
+         x="5.540915"
+         y="99.097015">TERR  ENGER</tspan></text>
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+       d="m 109.63521,101.0239 c 0,0 6.54882,-1.43449 18.79229,7.41149 12.24344,8.84596 11.59425,-1.27917 21.63955,-2.15173 8.25721,-0.71724 23.91745,-1.43447 23.91745,-1.43447"
+       id="path3"
+       sodipodi:nodetypes="cssc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1"
+       d="m 109.6347,104.01629 c 0,0 9.1223,-1.35633 18.79224,7.41149 11.30068,10.24646 13.82674,1.97482 21.63957,-0.47816 5.23885,-1.64481 24.4869,-2.15172 24.4869,-2.15172"
+       id="path3-1"
+       sodipodi:nodetypes="cssc" />
+    <path
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1"
+       d="m 109.6347,107.72135 c 0,0 9.93145,-1.3926 18.79224,7.41149 16.5303,16.42454 14.46563,6.10077 22.49375,0.95632 2.53252,-1.62282 7.94354,-1.63442 10.38508,-2.16513 7.98966,-1.73664 13.8171,-1.89923 13.8171,-1.89923 m -65.48766,2.7522 c 0,0 10.1538,-1.54702 18.79229,7.4115 21.37072,22.16245 13.42927,-0.25313 24.48689,-1.1954 8.75238,-0.74585 16.46249,-8.50212 21.07011,-5.02071"
+       id="path3-1-5"
+       sodipodi:nodetypes="csssccssc" />
+    <path
+       style="fill:none;stroke:#f60000;stroke-width:5;stroke-dasharray:10,5;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 119.89512,112.90462 20.34131,-49.984045 21.15494,49.577675"
+       id="path2" />
+  </g>
+</svg>

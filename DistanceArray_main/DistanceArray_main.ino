@@ -10,7 +10,7 @@ VL53L5CX_ResultsData measurementData_1; // Result data class structure, 1356 bye
 VL53L5CX_ResultsData measurementData_2;
 
 uint8_t percent = 30; // Set sharpening percentage
-uint8_t freq = 15; // Set ranging frequency
+uint8_t freq = 60; // Set ranging frequency
 uint8_t res = 4*4; // Set sensor resolution
 
 int imageResolution = 0; //Used to pretty print output
