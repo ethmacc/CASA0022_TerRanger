@@ -4,6 +4,7 @@ import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthiking_app/screens/scan.dart';
 import 'package:smarthiking_app/screens/home.dart';
+import 'package:smarthiking_app/screens/backup.dart';
 
 class BottomNavbar extends StatelessWidget{
   const BottomNavbar({super.key});
@@ -22,10 +23,15 @@ class BottomNavbar extends StatelessWidget{
               context,
               MaterialPageRoute(builder: (context) => const HomePage(title: 'Home: Your Hikes',))
             );
-          case 1:
+          case 2:
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ScanPage())
+            );
+          case 3:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BackupPage())
             );
         }
       },
@@ -38,10 +44,18 @@ class BottomNavbar extends StatelessWidget{
           label: 'Home',
         ),
         NavigationDestination(
+          icon: Icon(Icons.camera), 
+          label: 'Camera'
+        ),
+        NavigationDestination(
           icon: !connManager.isConnected ? Icon(Icons.bluetooth) : Badge(backgroundColor:Colors.green, child: Icon(Icons.bluetooth)),
           label: 'Manage Devices'
           ,
         ),
+        NavigationDestination(
+          icon: Icon(Icons.file_download), 
+          label: 'Backups'
+        )
       ],
     );
   }

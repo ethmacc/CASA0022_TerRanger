@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:io';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class Hike {
   final int id;
@@ -137,5 +139,26 @@ Future<List<Map>> getAllData (String tableName) async {
   return maps;
 }
 
+//Adapted from https://medium.com/@soojlee0701/safely-backing-up-sqlflite-in-flutter-120718588dd5
+void exportBackup() async {
+  final dbPath = await getDatabasesPath();
+  final dbFile = File(join(dbPath, 'hikes_database.db'));
+  final dataAsBytes = await dbFile.readAsBytes();
+
+  final backupFile = File(join(dbPath, 'hikes_database_backup.db'));
+  await backupFile.writeAsBytes(dataAsBytes);
+
+  final Email email = Email(
+    body: 'TerRanger data backup file attached',
+    subject: 'TerRanger Backup',
+    recipients: ['ethmacc@gmail.com'],
+    attachmentPaths: [join(dbPath, 'hikes_database_backup.db')],
+    isHTML: false,
+  );
+
+  await FlutterEmailSender.send(email);
+
+  return;
+}
 
 

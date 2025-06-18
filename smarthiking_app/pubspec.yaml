@@ -48,6 +48,7 @@ dependencies:
   location: ^8.0.0
   flutter_native_splash: ^2.4.6
   ditredi: ^2.0.2
+  flutter_email_sender: ^7.0.0
 
 dev_dependencies:
   flutter_test:
