@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:io';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class Hike {
   final int id;
@@ -140,7 +141,7 @@ Future<List<Map>> getAllData (String tableName) async {
 }
 
 //Adapted from https://medium.com/@soojlee0701/safely-backing-up-sqlflite-in-flutter-120718588dd5
-void exportBackup() async {
+Future<ShareResult> exportBackup() async {
   final dbPath = await getDatabasesPath();
   final dbFile = File(join(dbPath, 'hikes_database.db'));
   final dataAsBytes = await dbFile.readAsBytes();
@@ -148,17 +149,38 @@ void exportBackup() async {
   final backupFile = File(join(dbPath, 'hikes_database_backup.db'));
   await backupFile.writeAsBytes(dataAsBytes);
 
-  final Email email = Email(
-    body: 'TerRanger data backup file attached',
-    subject: 'TerRanger Backup',
-    recipients: ['ethmacc@gmail.com'],
-    attachmentPaths: [join(dbPath, 'hikes_database_backup.db')],
-    isHTML: false,
+  return await SharePlus.instance.share(ShareParams(
+    text: 'TerRanger data backup file',
+    subject: 'hikes_database_backup.db',
+    files: [XFile(backupFile.path)])
   );
-
-  await FlutterEmailSender.send(email);
-
-  return;
 }
+
+//Adapted from https://medium.com/@soojlee0701/safely-backing-up-sqlflite-in-flutter-120718588dd5
+Future<bool> importBackup() async {
+  await FilePicker.platform.clearTemporaryFiles();
+  final result = await FilePicker.platform.pickFiles();
+
+  if (result == null || result.files.isEmpty) {
+    return false;
+  }
+
+  final selectedFilePath = result.files.single.path;
+  if (selectedFilePath == null) {
+    return false;
+  }
+
+  final dbPath = await getDatabasesPath();
+  final currentDbFile = File(join(dbPath, 'hikes_database.db'));
+  final selectedFile = File(selectedFilePath);
+
+  if (await selectedFile.exists()) {
+    final parsedData = await selectedFile.readAsBytes();
+    await currentDbFile.writeAsBytes(parsedData);
+    return true;
+  } else {
+    return false;
+  }
+ }
 
 

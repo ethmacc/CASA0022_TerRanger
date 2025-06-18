@@ -38,7 +38,21 @@ class _BackupPageState extends State<BackupPage> {
               onPressed: () {
                 exportBackup();
               }, 
-              child: Text('Send backup to email')
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
+                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
+              ),
+              child: Text('Export data backup'),
+            ),
+              TextButton(
+              onPressed: () {
+                importBackup();
+              }, 
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll<Color>(Colors.red),
+                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
+              ),
+              child: Text('Import data backup'),
             )
           ],
         )

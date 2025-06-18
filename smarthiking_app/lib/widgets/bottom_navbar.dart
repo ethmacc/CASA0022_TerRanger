@@ -49,7 +49,7 @@ class BottomNavbar extends StatelessWidget{
         ),
         NavigationDestination(
           icon: !connManager.isConnected ? Icon(Icons.bluetooth) : Badge(backgroundColor:Colors.green, child: Icon(Icons.bluetooth)),
-          label: 'Manage Devices'
+          label: 'Devices'
           ,
         ),
         NavigationDestination(
