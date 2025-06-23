@@ -12,6 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'dart:async';
 
+import 'package:vector_math/vector_math_64.dart' as vmath;
+
 class HikeDetail extends StatefulWidget {
   const HikeDetail({super.key, required this.hikeID, required this.initialMaps, required this.initalHike});
   final int hikeID;
@@ -60,11 +62,22 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
   //Modified version of Nitesh's solution on StackOverflow (https://stackoverflow.com/questions/66181115/flutter-polyline-distance-with-google-maps-flutter-plugin)
   double calculateDistance(List<LatLng> polyline) {
     double totalDistance = 0;
+    double earthRadius = 6371;
     for (int i = 0; i < polyline.length; i++) {
       if (i < polyline.length - 1) { // skip the last index
-        totalDistance += Point(polyline[i + 1].latitude, polyline[i + 1].longitude).distanceTo(Point(polyline[i].latitude, polyline[i].longitude));
+        double diffLat = vmath.radians(polyline[i + 1].latitude - polyline[i].latitude);
+        double diffLong = vmath.radians(polyline[i + 1].longitude - polyline[i].longitude);
+
+        double lat1 = vmath.radians(polyline[i].latitude);
+        double lat2 = vmath.radians(polyline[i + 1].latitude);
+
+        double a = sin(diffLat / 2) * sin(diffLat / 2) + cos(lat1) * cos(lat2) * sin(diffLong / 2) * sin(diffLong / 2); 
+        double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+      
+        totalDistance += earthRadius * c;
       }
     }
+    debugPrint('$totalDistance');
     return totalDistance;
   }
 

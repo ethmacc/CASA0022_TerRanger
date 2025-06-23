@@ -34,7 +34,7 @@ class _BackupPageState extends State<BackupPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextButton(
+            IconButton(
               onPressed: () {
                 exportBackup();
               }, 
@@ -42,9 +42,11 @@ class _BackupPageState extends State<BackupPage> {
                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
                 foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
               ),
-              child: Text('Export data backup'),
+              icon: Icon(Icons.ios_share),
             ),
-              TextButton(
+            Text('Export backup'),
+            Padding(padding: EdgeInsets.all(20)),
+              IconButton(
               onPressed: () {
                 importBackup();
               }, 
@@ -52,8 +54,9 @@ class _BackupPageState extends State<BackupPage> {
                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.red),
                 foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
               ),
-              child: Text('Import data backup'),
-            )
+              icon: Icon(Icons.download),
+            ),
+            Text('Import backup'),
           ],
         )
       )
