@@ -323,6 +323,25 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                         ],
                       ),
                     ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 100),
+                    child: CarouselView(
+                      scrollDirection: Axis.horizontal,
+                      itemExtent: 150,
+                      children: List<Widget>.generate(5, (int index) {
+                        return Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.amber
+                            ),
+                            child: Text('text $index', style: TextStyle(fontSize: 16.0),)
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

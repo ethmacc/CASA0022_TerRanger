@@ -1,10 +1,14 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/screens/home.dart';
 import 'package:provider/provider.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/models/current_page.dart';
 
-void main() {
+late CameraDescription firstCam;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     MultiProvider(
       providers: [
@@ -21,11 +25,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Terraenger',
+      title: 'TerRanger',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lime),
       ),
-      home: const HomePage(title:'Home: Your Hikes'),
+      home: HomePage(title:'Home: Your Hikes'),
     );
   }
 }

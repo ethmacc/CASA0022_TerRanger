@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/models/current_page.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:smarthiking_app/screens/scan.dart';
 import 'package:smarthiking_app/screens/home.dart';
 import 'package:smarthiking_app/screens/backup.dart';
+import 'package:smarthiking_app/screens/take_pic.dart';
 
 class BottomNavbar extends StatelessWidget{
   const BottomNavbar({super.key});
@@ -14,15 +16,29 @@ class BottomNavbar extends StatelessWidget{
     CurrentPage currentPage = Provider.of<CurrentPage>(context, listen:false);
     ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
 
+    void pushTakePicPage () async {
+      // Obtain a list of the available cameras on the device.
+      final cameras = await availableCameras();
+
+      // Get a specific camera from the list of available cameras.
+      final firstCamera = cameras.first;
+      Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TakePicturePage(camera: firstCamera))
+      );
+    }
+
     return NavigationBar(
       onDestinationSelected: (int index) {
         currentPage.setPage(index);
-        switch (index){
+        switch (index) {
           case 0:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage(title: 'Home: Your Hikes',))
+              MaterialPageRoute(builder: (context) => HomePage(title: 'Home: Your Hikes'))
             );
+          case 1:
+            pushTakePicPage();
           case 2:
             Navigator.push(
               context,
