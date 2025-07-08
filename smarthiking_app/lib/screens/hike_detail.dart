@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:vector_math/vector_math_64.dart' as vmath;
 
@@ -158,6 +161,12 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
     setState(() {});
   }
 
+  Future<File> _getLocalFile(String filename) async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = new File('$dir/$filename');
+    return file;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,10 +188,12 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
       body: RefreshIndicator(
         onRefresh: _handleRefresh, // from https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize
         child: FutureBuilder(
-          future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), 
+          future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), //TODO: add future _getLocalFile("flutter_assets/image.png")
           builder: (context, allData) {
               ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
               bool isHikeActive = connManager.isHikeActive(widget.hikeID);
+
+              //List<List<Map<dynamic, dynamic>>> _allData = List.from(allData.data as List<List<Map<dynamic, dynamic>>>);
 
               late Map hikeData;
               if (allData.data?[0] != null) {
@@ -327,6 +338,8 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                     constraints: const BoxConstraints(maxHeight: 100),
                     child: CarouselView(
                       scrollDirection: Axis.horizontal,
+                      shrinkExtent: 50,
+                      shape: ContinuousRectangleBorder(),
                       itemExtent: 150,
                       children: List<Widget>.generate(5, (int index) {
                         return Center(

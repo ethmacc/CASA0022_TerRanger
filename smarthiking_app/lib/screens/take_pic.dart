@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as img;
+import 'package:smarthiking_app/models/conn_manager.dart';
+import 'package:provider/provider.dart';
 
 class TakePicturePage extends StatefulWidget {
   const TakePicturePage({super.key, required this.camera});
@@ -37,6 +43,8 @@ class TakePicturePageState extends State<TakePicturePage> {
 
   @override
   Widget build(BuildContext context) {
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
+
     return Scaffold( 
       appBar: AppBar(title: const Text("Take a picture"),),
       body: FutureBuilder<void>(
@@ -55,8 +63,25 @@ class TakePicturePageState extends State<TakePicturePage> {
         onPressed: () async {
           try {
             await _initializeControllerFuture;
+            //Take a photo on button press
             final image = await _controller.takePicture();
-            debugPrint("PICTURE SAVED AT ${image.path}");
+            debugPrint("Picture temporarily saved at ${image.path}");
+            final imageBytes = await File(image.path).readAsBytes();
+            final img.Image? decodedImage = img.decodeImage(imageBytes);
+
+            final dir = await getExternalStorageDirectory();
+            if ((dir != null && decodedImage != null)) {
+              int activeHike = connManager.getActiveHikeId;
+              final imgPath = '${dir.path}/TerRanger_images/';
+              final imgDir = await Directory(imgPath).create();
+
+              //Get image file count and save with assigned number
+              var listOfFiles = await imgDir.list(recursive: true).toList();
+              var count = listOfFiles.length;
+              var compressedImage = File('$imgPath/hike_${activeHike}_image_${count+1}.jpg').writeAsBytesSync(img.encodeJpg(decodedImage));
+              debugPrint('Image saved as hike_${activeHike}_image_${count+1}.jpg');
+            }
+
             if (!context.mounted) return;
           } catch (e) {
             debugPrint("$e");
