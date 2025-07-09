@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smarthiking_app/models/conn_manager.dart';
 import 'package:smarthiking_app/widgets/bottom_navbar.dart';
 import 'package:smarthiking_app/screens/enter_hike.dart';
 import 'package:smarthiking_app/models/db_manager.dart';
@@ -160,6 +162,8 @@ class _SampleDetailState extends State<SampleDetail> {
 
   @override
   Widget build(BuildContext context) {
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
+
     controller.update(userScale: 2);
 
     return Scaffold(

@@ -169,6 +169,8 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -190,7 +192,6 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
         child: FutureBuilder(
           future: Future.wait([getHikeByID(widget.hikeID), getSamplesByID(widget.hikeID)]), //TODO: add future _getLocalFile("flutter_assets/image.png")
           builder: (context, allData) {
-              ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
               bool isHikeActive = connManager.isHikeActive(widget.hikeID);
 
               //List<List<Map<dynamic, dynamic>>> _allData = List.from(allData.data as List<List<Map<dynamic, dynamic>>>);

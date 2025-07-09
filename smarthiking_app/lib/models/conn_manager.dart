@@ -21,6 +21,8 @@ class ConnManager extends ChangeNotifier {
   int activeHikeId = -1;
   int get getActiveHikeId => activeHikeId;
 
+  List<int> decoded = List.empty(growable: true); 
+
   void activateHike(int id) {
     activeHikeId = id;
     notifyListeners();
@@ -39,8 +41,6 @@ class ConnManager extends ChangeNotifier {
       return false;
     }
   }
-  
-  List<int> decoded = List.empty(growable: true); 
 
   void connect() {
     scanning = true;
@@ -107,6 +107,7 @@ class ConnManager extends ChangeNotifier {
                 elevation: currentPosition.altitude,
                 )
             );
+            notifyListeners();
           }
         } else {
           debugPrint('No hike is active, data not captured');
