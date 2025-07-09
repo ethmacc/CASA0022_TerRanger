@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:smarthiking_app/models/conn_manager.dart';
-import 'package:smarthiking_app/widgets/bottom_navbar.dart';
-import 'package:smarthiking_app/screens/enter_hike.dart';
+import 'package:terranger_lite/models/conn_manager.dart';
+import 'package:terranger_lite/widgets/bottom_navbar.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -44,15 +43,6 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavbar(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EnterHike())
-            );
-        },
-        child: Icon(Icons.add)
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

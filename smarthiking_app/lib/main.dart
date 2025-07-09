@@ -1,9 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:smarthiking_app/screens/home.dart';
 import 'package:provider/provider.dart';
-import 'package:smarthiking_app/models/conn_manager.dart';
-import 'package:smarthiking_app/models/current_page.dart';
+import 'package:terranger_lite/models/conn_manager.dart';
+import 'package:terranger_lite/models/current_page.dart';
+import 'package:terranger_lite/screens/sample_detail.dart';
 
 late CameraDescription firstCam;
 void main() async {
@@ -29,7 +29,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lime),
       ),
-      home: HomePage(title:'Home: Your Hikes'),
+      home: SampleDetail(),
     );
   }
 }

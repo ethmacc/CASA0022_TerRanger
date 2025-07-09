@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:smarthiking_app/widgets/bottom_navbar.dart';
-import 'package:smarthiking_app/screens/enter_hike.dart';
-import 'package:smarthiking_app/models/db_manager.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'dart:convert';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'dart:math';
+import 'package:provider/provider.dart';
+import 'package:terranger_lite/widgets/bottom_navbar.dart';
+import 'package:terranger_lite/models/conn_manager.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:convert';
 import 'package:ditredi/ditredi.dart';
 import 'package:vector_math/vector_math_64.dart' as vmath;
 
+late List<List> pointListData;
+late List<Model3D> vectorData;
+late String selectedSample;
+
 class SampleDetail extends StatefulWidget {
-  const SampleDetail({super.key, required this.hikeId, required this.initialSamples});
-  final int hikeId;
-  final List<Map> initialSamples;
+  const SampleDetail({super.key});
 
   @override
   State<SampleDetail> createState() => _SampleDetailState();
@@ -33,31 +34,6 @@ class _SampleDetailState extends State<SampleDetail> {
   List<Color> dotColours = [Colors.red,Colors.orange, Colors.yellow, Colors.green];
   List<String> sectionTypes = ['Fore', 'Mid-Fore', 'Mid-Aft', 'Aft'];
 
-  dynamic getRouteBounds (List<LatLng> routeCoords) {
-    //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
-    double minLat = routeCoords.first.latitude;
-    double minLong = routeCoords.first.longitude;
-    double maxLat = routeCoords.first.latitude;
-    double maxLong = routeCoords.first.longitude;
-
-    for (var i = 0; i < routeCoords.length; i ++) {
-      if(routeCoords[i].latitude < minLat) minLat = routeCoords[i].latitude;
-      if(routeCoords[i].latitude > maxLat) maxLat = routeCoords[i].latitude;
-      if(routeCoords[i].longitude < minLong) minLong = routeCoords[i].longitude;
-      if(routeCoords[i].longitude > maxLong) maxLong = routeCoords[i].longitude;
-    }
-
-    LatLng startCoord = LatLng(minLat, minLong);
-    LatLng endCoord = LatLng(maxLat, maxLong);
-
-    if (Point(startCoord.latitude, startCoord.longitude).distanceTo(Point(endCoord.latitude, endCoord.longitude)) > 0) {
-        LatLngBounds bounds = LatLngBounds(startCoord, endCoord);
-        return bounds;
-    } else {
-      return -1;
-    }
-  }
-  
   List<List> parseAndScalePts(String rawData) {
     List<int> dataList = json.decode(rawData).cast<int>().toList();
     List<vmath.Vector3> scaledList = [];
@@ -151,69 +127,30 @@ class _SampleDetailState extends State<SampleDetail> {
     return [pointList, figures];
   }
 
-  Future<void> _handleRefresh() async {
-    // Simulate network fetch or database query
-    await Future.delayed(Duration(seconds: 2));
-    // Update the list of items and refresh the UI
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
+    ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
+    
     controller.update(userScale: 2);
+
+    if (connManager.isSampleReady) {
+      selectedSample = connManager.getDataSample;
+      List<List> parsed = parseAndScalePts(selectedSample);
+      pointListData = List.from(parsed[0]);
+      vectorData = List.from(parsed[1]);
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Sample Data Viewer'),
       ),
-      bottomNavigationBar: BottomNavbar(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EnterHike())
-            );
-        },
-        child: Icon(Icons.add)
-      ),
+      bottomNavigationBar: BottomNavbar(),  
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      body: RefreshIndicator(onRefresh: _handleRefresh, // from https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize,
-        child:FutureBuilder(
-          future: getSamplesByID(widget.hikeId), 
-          builder: (context, allSamples) {
-            List<LatLng> routeCoords = [];
-            late List<Map> samplesToLoad;
-
-            if (allSamples.data != null) {
-              samplesToLoad = List.from(allSamples.data as List);
-            } else {
-              samplesToLoad = widget.initialSamples;
-            }
-
-            if (samplesToLoad.isNotEmpty) {
-              Map selectedSample = samplesToLoad[(selected - 1).floor()];
-              List<List> parsed = parseAndScalePts(selectedSample['tofData']);
-              List<List> pointListData = List.from(parsed[0]);
-              List<Model3D> vectorData = List.from(parsed[1]);
-
-              for (var i = 0; i < samplesToLoad.length; i ++) {
-                LatLng coord = LatLng(samplesToLoad[i]['lat'], samplesToLoad[i]['long']);
-                routeCoords.add(coord);
-              }
-              
-              late dynamic bounds; 
-
-              if (routeCoords.length > 1) {
-                bounds = getRouteBounds(routeCoords);
-              } else {
-                bounds = -1;
-              }
-
-              return SingleChildScrollView(child: 
+      body: SingleChildScrollView(child: 
                 Center(
                 child: Column(
-                children: [
+                children: connManager.isSampleReady ? [
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: ListTile(
@@ -227,22 +164,6 @@ class _SampleDetailState extends State<SampleDetail> {
                       ),
                       subtitle: Text('LiDAR point clouds of ground surface'),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                    child: Text('Selected sample: ${selected.floor()} of ${samplesToLoad.length}', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
-                    ),
-                  Slider(
-                    value: selected, 
-                    onChanged: (double value) {
-                      setState(() {
-                        debugPrint('$value');
-                        selected = value;
-                      });
-                    },
-                    min: 1,
-                    max: samplesToLoad.length.toDouble(),
-                    divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
@@ -324,29 +245,19 @@ class _SampleDetailState extends State<SampleDetail> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
-                  SizedBox(
+                    SizedBox(
                       height: MediaQuery.of(context).size.width / 10 * 4,
                       width: MediaQuery.of(context).size.width / 10 * 8,
                       child: FlutterMap(
-                        options: (routeCoords.length < 2 || bounds == -1) ? MapOptions(
-                          initialCenter: LatLng(51.5, 0.127),
-                          initialZoom: 9,
-                        ) :
-                        MapOptions(
-                          initialCameraFit: CameraFit.bounds(bounds: bounds),
+                        options: MapOptions(
+                          initialCenter: LatLng(51.53768801847068, -0.01206702370748751),
+                          initialZoom: 14,
                         ),
                         children: [
                           TileLayer(
                             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                           ),
-                          MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
-                          PolylineLayer(
-                            polylines: routeCoords.isNotEmpty ? [Polyline(
-                              points: routeCoords,
-                              color: Colors.blue,
-                              strokeWidth: 5,
-                              )] :
-                            <Polyline<Object>> []),
+                          MarkerLayer(markers: [Marker(point: LatLng(51.53768801847068, -0.01206702370748751), child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
                           RichAttributionWidget(attributions: [
                             TextSourceAttribution('OpenStreetMap contributors')
                           ])
@@ -356,24 +267,10 @@ class _SampleDetailState extends State<SampleDetail> {
                     Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 50),
                   ),
-                ],
+                ] : [CircularProgressIndicator()],
               )
-              )
-              );
-            } else {
-              return Center(
-                child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('No samples logged yet'),
-                  ],
-                )
-                );
-            }      
-          }
-        ),
-      )
-    );
+            )
+          )
+      );
+    }
   }
-}

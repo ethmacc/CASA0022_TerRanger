@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:smarthiking_app/models/db_manager.dart';
 import 'package:geolocator/geolocator.dart';
 
 class ConnManager extends ChangeNotifier {
@@ -18,26 +17,16 @@ class ConnManager extends ChangeNotifier {
   bool scanning = false;
   bool get isScanning => scanning;
 
-  int activeHikeId = -1;
-  int get getActiveHikeId => activeHikeId;
+  dynamic dataSample;
+  String get getDataSample => dataSample;
 
-  void activateHike(int id) {
-    activeHikeId = id;
+  bool sampleReady = false;
+  bool get isSampleReady => sampleReady;
+
+  void setSample(String sample) {
+    dataSample = sample;
+    sampleReady = true;
     notifyListeners();
-  }
-
-  void deactivateHike() {
-    activeHikeId = -1;
-    notifyListeners();
-  }
-
-  bool isHikeActive(int id) {
-    if (activeHikeId == id) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
   
   List<int> decoded = List.empty(growable: true); 
@@ -92,25 +81,12 @@ class ConnManager extends ChangeNotifier {
           decoded.add(decodedInt);
         }
         debugPrint('Decoded: $decoded');
-        if (activeHikeId != -1) {
-          int newSampleId = await getLatestID('samples');
           Position? currentPosition = await Geolocator.getLastKnownPosition();
           debugPrint('$currentPosition');
-          if (currentPosition != null) {
-            insertSample(
-              Sample(
-                id: newSampleId, 
-                hikeId: activeHikeId, 
-                tofData: '$decoded', 
-                lat: currentPosition.latitude, 
-                long: currentPosition.longitude,
-                elevation: currentPosition.altitude,
-                )
-            );
-          }
-        } else {
-          debugPrint('No hike is active, data not captured');
-        }
+          setSample(
+            '$decoded'
+          );
+          debugPrint("$isSampleReady");
     });
   }
 }
