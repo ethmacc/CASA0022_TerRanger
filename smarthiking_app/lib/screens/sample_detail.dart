@@ -256,6 +256,10 @@ class _SampleDetailState extends State<SampleDetail> {
                         children: [
                           TileLayer(
                             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'dev.terranger.lite',
+                            tileProvider: NetworkTileProvider(
+                              cachingProvider:BuiltInMapCachingProvider.getOrCreateInstance()
+                            )
                           ),
                           MarkerLayer(markers: [Marker(point: LatLng(51.53768801847068, -0.01206702370748751), child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
                           RichAttributionWidget(attributions: [

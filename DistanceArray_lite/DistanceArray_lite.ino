@@ -93,10 +93,7 @@ void loop()
     digitalWrite(LED_BUILTIN, HIGH);
 
     while (central.connected()) {
-        // read the state of the pushbutton value:
-        buttonState = digitalRead(buttonPin);
-        // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-        if (buttonState == HIGH && millis() - pressTime > 500) {
+        if (millis() - pressTime > 2000) {
           Serial.println("ToF cam1");
           updateDistance(1);
           Serial.println("ToF cam2");
@@ -141,8 +138,7 @@ void loop()
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
   } else {
-    buttonState = digitalRead(buttonPin);
-    if (buttonState == HIGH && millis() - pressTime > 500) {
+    if  (millis() - pressTime > 2000) {
       Serial.println("Warning! No connection to central. Data not transmitted");
       Serial.println("ToF cam1");
       updateDistance(1);
