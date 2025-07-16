@@ -44,7 +44,7 @@ class _SampleDetailState extends State<SampleDetail> {
         paint = Colors.green;
       } else if (height > 70 && height <= 110) {
         paint = Colors.yellow;
-      } else if (height > 110 && height <= 160) {
+      } else if (height > 110 && height <= 150) {
         paint = Colors.orange;
       } else {
         paint = Colors.red;
@@ -119,8 +119,8 @@ class _SampleDetailState extends State<SampleDetail> {
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
 
-      List<double> point = [finalVect.x, finalVect.z + 620, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
-      Color paint = paintByHeight(finalVect.z + 620);
+      List<double> point = [finalVect.x, finalVect.z + 520, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
+      Color paint = paintByHeight(finalVect.z + 520);
 
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
@@ -196,7 +196,7 @@ class _SampleDetailState extends State<SampleDetail> {
   Widget build(BuildContext context) {
     ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
     
-    controller.update(userScale: 1.5);
+    controller.update(userScale: 2);
 
     if (connManager.isSampleReady) {
       selectedSample = connManager.getDataSample;
@@ -246,7 +246,7 @@ class _SampleDetailState extends State<SampleDetail> {
                       ),
                     ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                     child: Text('3D Point Cloud', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
                     ),
                   SizedBox(
@@ -282,8 +282,8 @@ class _SampleDetailState extends State<SampleDetail> {
                           }).toList(),
                           maxX: 600.0,
                           minX: -600.0,
-                          maxY: 500.0,
-                          minY: -100,
+                          maxY: 400.0,
+                          minY: -200,
                           titlesData: FlTitlesData(
                             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
