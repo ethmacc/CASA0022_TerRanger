@@ -93,10 +93,8 @@ void loop()
     digitalWrite(LED_BUILTIN, HIGH);
 
     while (central.connected()) {
-        if (millis() - pressTime > 2000) {
-          Serial.println("ToF cam1");
+        if (millis() - pressTime > 2500) {
           updateDistance(1);
-          Serial.println("ToF cam2");
           updateDistance(2);
 
            if (IMU.accelerationAvailable()) {
@@ -110,14 +108,8 @@ void loop()
           int roll = calculateRoll(consX, consY, consZ);
           int pitch  = calculatePitch(consX, consY, consZ);
 
-          Serial.println(roll);
-          Serial.println(pitch);
-
           uint16_t roll16 = uint16_t(roll + 180);
           uint16_t pitch16 = uint16_t(pitch + 180);
-
-          Serial.println(roll16);
-          Serial.println(pitch16);
             
           uint16_t acc_data[2] = {roll16, pitch16};
 
@@ -137,36 +129,6 @@ void loop()
     digitalWrite(LED_BUILTIN, LOW);
     Serial.print("Disconnected from central: ");
     Serial.println(central.address());
-  } else {
-    if  (millis() - pressTime > 2000) {
-      Serial.println("Warning! No connection to central. Data not transmitted");
-      Serial.println("ToF cam1");
-      updateDistance(1);
-      Serial.println("ToF cam2");
-      updateDistance(2);
-
-      if (IMU.accelerationAvailable()) {
-        IMU.readAcceleration(accX, accY, accZ);
-      }
-
-        float consX = constrain(accX, -1.0, 1.0);
-        float consY = constrain(accY, -1.0, 1.0);
-        float consZ = constrain(accZ, -1.0, 1.0);
-
-        int roll = calculateRoll(consX, consY, consZ);
-        int pitch  = calculatePitch(consX, consY, consZ);
-
-        Serial.println(roll);
-        Serial.println(pitch);
-
-        uint16_t roll16 = uint16_t(roll + 180);
-        uint16_t pitch16 = uint16_t(pitch + 180);
-
-        Serial.println(roll16);
-        Serial.println(pitch16);
-
-      pressTime = millis();
-    }
   }
 }
  
@@ -176,44 +138,15 @@ void updateDistance(int cam) {
       //Poll sensor for new data
       if (tof_1.isDataReady() == true)
       {
-        if (tof_1.getRangingData(&measurementData_1)) //Read distance data into array
-        {
-          //tofChar.writeValue(measurementData_1.distance_mm, 128);
-          //The ST library returns the data transposed from zone mapping shown in datasheet
-          //Pretty-print data with increasing y, decreasing x to reflect reality
-          for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth)
-          {
-            for (int x = imageWidth - 1 ; x >= 0 ; x--)
-            {
-              Serial.print("\t");
-              Serial.print(measurementData_1.distance_mm[x + y]);
-            }
-            Serial.println();
-          }
-          Serial.println();
-        }
+        tof_1.getRangingData(&measurementData_1); //Read distance data into array
+        {}
       }
       break;
     case 2:
       //Poll sensor for new data
       if (tof_2.isDataReady() == true)
       {
-        if (tof_2.getRangingData(&measurementData_2)) //Read distance data into array
-        {
-          //tofChar.writeValue(measurementData_1.distance_mm, 128);
-          //The ST library returns the data transposed from zone mapping shown in datasheet
-          //Pretty-print data with increasing y, decreasing x to reflect reality
-          for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth)
-          {
-            for (int x = imageWidth - 1 ; x >= 0 ; x--)
-            {
-              Serial.print("\t");
-              Serial.print(measurementData_2.distance_mm[x + y]);
-            }
-            Serial.println();
-          }
-          Serial.println();
-        }
+        tof_2.getRangingData(&measurementData_2); //Read distance data into array
       }
       break;
   }
