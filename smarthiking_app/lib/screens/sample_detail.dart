@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:terranger_lite/widgets/bottom_navbar.dart';
 import 'package:terranger_lite/models/conn_manager.dart';
@@ -11,6 +9,7 @@ import 'package:vector_math/vector_math_64.dart' as vmath;
 
 late List<List> pointListData;
 late List<Model3D> vectorData;
+late double erosionVal;
 late String selectedSample;
 
 class SampleDetail extends StatefulWidget {
@@ -120,23 +119,20 @@ class _SampleDetailState extends State<SampleDetail> {
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
 
-      final point = (finalVect.x, finalVect.z + 620, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
+      List<double> point = [finalVect.x, finalVect.z + 620, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
       Color paint = paintByHeight(finalVect.z + 620);
 
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
           fore.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
         case 1 || 5 || 9 || 13 || 18 || 22 || 26 || 30: //indices corresponding to midfore section
           midFore.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
         case 2 || 6 || 10 || 14 || 17 || 21 || 25 ||29: //etc
           midAft.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
         case 3 || 7 || 11 || 15 || 16 || 20 || 24 || 28: //etc
           aft.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
       }
+      figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
     }
     pointList.add(fore);
     pointList.add(midFore);
@@ -146,6 +142,54 @@ class _SampleDetailState extends State<SampleDetail> {
     debugPrint('$accData');
 
     return [pointList, figures];
+  }
+
+  double calcErosion (List<List> sectionLists) { // using the official CSA method
+    double erosionArea = 0;
+    for (int i=1; i < sectionLists.length; i++) {
+      double max = 0; // DEV
+      for (int j=0; j < sectionLists[i].length; j++) {
+        List point = List.from(sectionLists[i][j] as List);
+        if (point[1] > max) {
+          if (point[0] > -300 && point[0] < 300) {
+            max = point[1];
+            }
+        }
+      }
+      double totalArea = 0;
+      for (int j=3; j >= 0; j--) { //ordered to array orientation in sensor
+        List point1 = List.from(sectionLists[i][j+1] as List);
+        List point2 = List.from(sectionLists[i][j] as List);
+
+        double v1 = max - point1[1];
+        double v2 = max - point2[1];
+        double i1 = point1[0];
+        double i2 = point2[0];
+        double area = (v1 + v2) * (i2 - i1).abs() * 0.5;
+        totalArea += area;
+      }
+      for (int j=4; j < sectionLists[i].length; j++) {
+        List point1 = List.from(sectionLists[i][j-1] as List);
+        List point2 = List.from(sectionLists[i][j] as List);
+        List point0 = List.from(sectionLists[i][0] as List);
+
+        double v1;
+        double i1;
+        if (j == 4) {
+          v1 = max - point0[1]; // to bridge the awkward join between indices 0 and 19 in the sensor array
+          i1 = point0[0];
+        } else {
+          v1 = max - point1[1];
+          i1 = point1[0];
+        }
+        double v2 = max - point2[1];
+        double i2 = point2[0];
+        double area = (v1 + v2) * (i2 - i1).abs() * 0.5;
+        totalArea += area;
+      }
+      erosionArea += totalArea;
+    }
+    return erosionArea /= (3 * 100); //return area averaged by 3 sections (ignore fore section for exhibition), expressed in sq cm
   }
 
   @override
@@ -159,6 +203,7 @@ class _SampleDetailState extends State<SampleDetail> {
       List<List> parsed = parseAndScalePts(selectedSample);
       pointListData = List.from(parsed[0]);
       vectorData = List.from(parsed[1]);
+      erosionVal = calcErosion(pointListData);
     }
 
     return Scaffold(
@@ -177,15 +222,29 @@ class _SampleDetailState extends State<SampleDetail> {
                     child: ListTile(
                       leading: Icon(Icons.timeline, size:36),
                       title: Text(
-                        'Sample Data Viewer',
+                        'Sample Viewer',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 28.0,
                         ),
                       ),
-                      subtitle: Text('LiDAR point clouds of ground surface'),
+                      subtitle: Text('LiDAR Scan and Erosion Data'),
                     ),
                   ),
+                   Padding(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    child: Text('Estimated Erosion (Cross Section Area)', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),),
+                    ),
+                    Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('${erosionVal.toStringAsFixed(2)} ', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),),
+                        Text('sq cm', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 26),)
+                      ]
+                      ),
+                    ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
                     child: Text('3D Point Cloud', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
@@ -212,7 +271,7 @@ class _SampleDetailState extends State<SampleDetail> {
                       child:  ScatterChart(
                         ScatterChartData(
                           scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
-                            final (double x, double y, double size) = e.value;
+                            final [double x, double y, double size] = e.value;
                             Color paint = paintByHeight(y);
 
                             return ScatterSpot(
@@ -264,33 +323,6 @@ class _SampleDetailState extends State<SampleDetail> {
                       icon: Icon(Icons.chevron_right)
                     ),
                   ],),                  
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Text('Sample Location', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.width / 10 * 4,
-                      width: MediaQuery.of(context).size.width / 10 * 8,
-                      child: FlutterMap(
-                        options: MapOptions(
-                          initialCenter: LatLng(51.53768801847068, -0.01206702370748751),
-                          initialZoom: 14,
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName: 'dev.terranger.lite',
-                            tileProvider: NetworkTileProvider(
-                              cachingProvider:BuiltInMapCachingProvider.getOrCreateInstance()
-                            )
-                          ),
-                          MarkerLayer(markers: [Marker(point: LatLng(51.53768801847068, -0.01206702370748751), child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
-                          RichAttributionWidget(attributions: [
-                            TextSourceAttribution('OpenStreetMap contributors')
-                          ])
-                        ],
-                      ),
-                    ),
                     Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 50),
                   ),
