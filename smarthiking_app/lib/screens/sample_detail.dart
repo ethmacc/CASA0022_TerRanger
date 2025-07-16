@@ -34,17 +34,17 @@ class _SampleDetailState extends State<SampleDetail> {
 
   Color paintByHeight(double height) {
     Color paint;
-    if (height <= 10) {
+    if (height <= -90) {
         paint = Colors.indigo;
-      } else if (height > 10 && height <= 20) {
+      } else if (height > -90 && height <= -80) {
         paint = Colors.cyan;
-      } else if (height > 20 && height <= 40) {
+      } else if (height > -80 && height <= -60) {
         paint = Colors.teal;
-      } else if (height > 40 && height <= 70) {
+      } else if (height > -60 && height <= -30) {
         paint = Colors.green;
-      } else if (height > 70 && height <= 110) {
+      } else if (height > -30 && height <= 10) {
         paint = Colors.yellow;
-      } else if (height > 110 && height <= 150) {
+      } else if (height > 10 && height <= 50) {
         paint = Colors.orange;
       } else {
         paint = Colors.red;
@@ -119,8 +119,8 @@ class _SampleDetailState extends State<SampleDetail> {
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
 
-      List<double> point = [finalVect.x, finalVect.z + 520, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
-      Color paint = paintByHeight(finalVect.z + 520);
+      List<double> point = [finalVect.x, finalVect.z + 420, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
+      Color paint = paintByHeight(finalVect.z + 420);
 
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
@@ -147,7 +147,7 @@ class _SampleDetailState extends State<SampleDetail> {
   double calcErosion (List<List> sectionLists) { // using the official CSA method
     double erosionArea = 0;
     for (int i=1; i < sectionLists.length; i++) {
-      double max = 0; // DEV
+      double max = 0;
       for (int j=0; j < sectionLists[i].length; j++) {
         List point = List.from(sectionLists[i][j] as List);
         if (point[1] > max) {
