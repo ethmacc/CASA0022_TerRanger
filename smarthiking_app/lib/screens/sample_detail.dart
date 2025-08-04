@@ -32,8 +32,27 @@ class _SampleDetailState extends State<SampleDetail> {
 
   double selected = 1.0;
   int selectedSection = 0;
-  List<Color> dotColours = [Colors.red,Colors.orange, Colors.yellow, Colors.green];
   List<String> sectionTypes = ['Fore', 'Mid-Fore', 'Mid-Aft', 'Aft'];
+
+  Color paintByHeight(double height) {
+    Color paint;
+    if (height <= 50) {
+        paint = Colors.indigo;
+      } else if (height > 50 && height <= 75) {
+        paint = Colors.cyan;
+      } else if (height > 75 && height <= 100) {
+        paint = Colors.teal;
+      } else if (height > 100 && height <= 150) {
+        paint = Colors.green;
+      } else if (height > 150 && height <= 200) {
+        paint = Colors.yellow;
+      } else if (height > 200 && height <= 300) {
+        paint = Colors.orange;
+      } else {
+        paint = Colors.red;
+      }
+    return paint;
+  }
 
   dynamic getRouteBounds (List<LatLng> routeCoords) {
     //derived from VitList's answer on StackOverflow (https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map)
@@ -70,6 +89,8 @@ class _SampleDetailState extends State<SampleDetail> {
     List aft = [];
     List<int> accData = [];
     List<Model3D> figures = [];
+
+    debugPrint('$dataList');
 
     vmath.Vector3 xAxis = vmath.Vector3(1.0, 0.0, 0.0);
     vmath.Vector3 yAxis = vmath.Vector3(0.0, 1.0, 0.0);
@@ -127,28 +148,25 @@ class _SampleDetailState extends State<SampleDetail> {
       vmath.Vector3 newVect = quartX.rotate(scaledList[i]);
       vmath.Vector3 finalVect = quartY.rotate(newVect);
 
-      final point = (finalVect.x, finalVect.z + 900, 2.0); // Convert vector to point, and discard y (depth) value for 2D display
+      List<double> point = [finalVect.x, finalVect.z + 900, 2.0]; // Convert vector to point, and discard y (depth) value for 2D display
+      Color paint = paintByHeight(finalVect.z + 900);
+
       switch (i) {
         case 0 || 4 || 8 || 12 || 19 || 23 || 27 || 31: //indices corresponding to fore section
           fore.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.red));
         case 1 || 5 || 9 || 13 || 18 || 22 || 26 || 30: //indices corresponding to midfore section
           midFore.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.orange));
         case 2 || 6 || 10 || 14 || 17 || 21 || 25 ||29: //etc
           midAft.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.yellow));
         case 3 || 7 || 11 || 15 || 16 || 20 || 24 || 28: //etc
           aft.add(point);
-          figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: Colors.green));
       }
+      figures.add(Point3D(vmath.Vector3(finalVect.x, finalVect.z, finalVect.y), width:7, color: paint));
     }
     pointList.add(fore);
     pointList.add(midFore);
     pointList.add(midAft);
     pointList.add(aft);
-
-    debugPrint('$accData');
 
     return [pointList, figures];
   }
@@ -240,7 +258,7 @@ class _SampleDetailState extends State<SampleDetail> {
                     value: selected, 
                     onChanged: (double value) {
                       setState(() {
-                        debugPrint('$value');
+                        //debugPrint('$value');
                         selected = value;
                       });
                     },
@@ -274,11 +292,12 @@ class _SampleDetailState extends State<SampleDetail> {
                       child:  ScatterChart(
                         ScatterChartData(
                           scatterSpots: pointListData[selectedSection].asMap().entries.map((e) {
-                            final (double x, double y, double size) = e.value;
+                            final [double x, double y, double size] = e.value;
+                            Color paint = paintByHeight(y);
                             return ScatterSpot(
                               x,
                               y,
-                              dotPainter: FlDotCirclePainter(color: dotColours[selectedSection])
+                              dotPainter: FlDotCirclePainter(color: paint)
                             );
                           }).toList(),
                           maxX: 1000.0,
