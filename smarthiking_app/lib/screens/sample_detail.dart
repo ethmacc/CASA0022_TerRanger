@@ -90,8 +90,6 @@ class _SampleDetailState extends State<SampleDetail> {
     List<int> accData = [];
     List<Model3D> figures = [];
 
-    debugPrint('$dataList');
-
     vmath.Vector3 xAxis = vmath.Vector3(1.0, 0.0, 0.0);
     vmath.Vector3 yAxis = vmath.Vector3(0.0, 1.0, 0.0);
 
@@ -178,6 +176,49 @@ class _SampleDetailState extends State<SampleDetail> {
     setState(() {});
   }
 
+  double calcErosion (List<List> sectionLists) { // using the official CSA method
+    double erosionArea = 0;
+    for (int i=0; i < sectionLists.length; i++) {
+      double max = 0;
+      for (int j=0; j < sectionLists[i].length; j++) {
+        List point = List.from(sectionLists[i][j] as List);
+        if (point[1] > max) {
+          max = point[1];
+        }
+      }
+      double totalArea = 0;
+      for (int j=3; j >= 0; j--) { //ordered to array orientation in sensor
+        List point1 = List.from(sectionLists[i][j] as List);
+        List point2;
+        if (j == 0) { // bridge the awkward gap from index 0 to 19 in the array
+          point2 = List.from(sectionLists[i][4] as List);
+        } else {
+          point2 = List.from(sectionLists[i][j-1] as List);
+        } 
+
+        double v1 = max - point1[1];
+        double v2 = max - point2[1];
+        double i1 = point1[0];
+        double i2 = point2[0];
+        double area = (v1 + v2) * (i2 - i1).abs() * 0.5;
+        totalArea += area;
+      }
+      for (int j=4; j < sectionLists[i].length - 1; j++) {
+        List point1 = List.from(sectionLists[i][j] as List);
+        List point2 = List.from(sectionLists[i][j+1] as List);
+
+        double v1 = max - point1[1];
+        double v2 = max - point2[1];
+        double i1 = point1[0];
+        double i2 = point2[0];
+        double area = (v1 + v2) * (i2 - i1).abs() * 0.5;
+        totalArea += area;
+      }
+      erosionArea += totalArea;
+    }
+    return erosionArea /= (4 * 100); //return area averaged by 3 sections (ignore fore section for exhibition), expressed in sq cm
+  }
+
   @override
   Widget build(BuildContext context) {
     ConnManager connManager = Provider.of<ConnManager>(context, listen:true);
@@ -219,6 +260,8 @@ class _SampleDetailState extends State<SampleDetail> {
               List<List> pointListData = List.from(parsed[0]);
               List<Model3D> vectorData = List.from(parsed[1]);
 
+              double erosionVal = calcErosion(pointListData);
+
               for (var i = 0; i < samplesToLoad.length; i ++) {
                 LatLng coord = LatLng(samplesToLoad[i]['lat'], samplesToLoad[i]['long']);
                 routeCoords.add(coord);
@@ -241,13 +284,13 @@ class _SampleDetailState extends State<SampleDetail> {
                     child: ListTile(
                       leading: Icon(Icons.timeline, size:36),
                       title: Text(
-                        'Sample Data Viewer',
+                        'Sample Viewer',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 28.0,
                         ),
                       ),
-                      subtitle: Text('LiDAR point clouds of ground surface'),
+                      subtitle: Text('LiDAR Scan and Erosion Data'),
                     ),
                   ),
                   Padding(
@@ -266,6 +309,20 @@ class _SampleDetailState extends State<SampleDetail> {
                     max: samplesToLoad.length.toDouble(),
                     divisions: samplesToLoad.length > 1 ? samplesToLoad.length - 1 : 1,
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    child: Text('Estimated Erosion (Cross Section Area)', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),),
+                    ),
+                    Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('${erosionVal.toStringAsFixed(2)} ', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),),
+                        Text('sq cm', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 26),)
+                      ]
+                      ),
+                    ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(10, 40, 10, 0),
                     child: Text('3D Point Cloud', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),),
