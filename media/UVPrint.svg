@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="104mm"
+   height="64mm"
+   viewBox="0 0 104 64"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="UVPrint.svg"
+   inkscape:export-filename="terraenger_UVPrint.pdf"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.1023743"
+     inkscape:cx="111.57735"
+     inkscape:cy="105.22742"
+     inkscape:window-width="1280"
+     inkscape:window-height="650"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="135.1628"
+       y="152.85189"
+       width="135.61637"
+       height="106.58811"
+       id="rect9" />
+    <rect
+       x="165.55175"
+       y="160.10896"
+       width="76.65273"
+       height="56.242239"
+       id="rect8" />
+    <rect
+       x="28.12112"
+       y="98.423919"
+       width="116.11301"
+       height="93.434688"
+       id="rect4" />
+    <rect
+       x="16.677435"
+       y="14.753116"
+       width="345.41534"
+       height="101.66821"
+       id="rect1" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text1"
+       style="white-space:pre;shape-inside:url(#rect1);display:inline;fill:#80390a" />
+    <text
+       xml:space="preserve"
+       style="font-size:16.2278px;fill:#80390a;stroke-width:0.264583"
+       x="1.3702782"
+       y="19.851576"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.2278px;font-family:Bahnschrift;-inkscape-font-specification:Bahnschrift;fill:#333333;stroke-width:0.264583"
+         x="1.3702782"
+         y="19.851576">TERRAENGER</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text4"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Bahnschrift;-inkscape-font-specification:Bahnschrift;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#333333;stroke:#000000;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text8"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Bahnschrift;-inkscape-font-specification:Bahnschrift;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#333333;stroke:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-25.561304,-15.600796)"
+       id="text9"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;font-family:Bahnschrift;-inkscape-font-specification:Bahnschrift;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#333333;stroke:none;stroke-opacity:1"><tspan
+         x="135.16211"
+         y="162.65368"
+         id="tspan9">Terraenger is a prototype </tspan><tspan
+         x="135.16211"
+         y="175.98705"
+         id="tspan10">smart device designed to </tspan><tspan
+         x="135.16211"
+         y="189.32042"
+         id="tspan11">monitor path erosion using </tspan><tspan
+         x="135.16211"
+         y="202.6538"
+         id="tspan12">LiDAR time-of-flight </tspan><tspan
+         x="135.16211"
+         y="215.98717"
+         id="tspan13">technology&#10;</tspan><tspan
+         x="135.16211"
+         y="229.32055"
+         id="tspan14">&#10;</tspan><tspan
+         x="135.16211"
+         y="242.65392"
+         id="tspan15">Terraenger v1.0.2025</tspan></text>
+    <circle
+       style="display:none;fill:#333333;stroke-width:0.264583"
+       id="path1"
+       cx="53.375137"
+       cy="49.301998"
+       r="6" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+       d="m 60.757715,31.057715 c 0,0 3.903427,-1.018286 11.20114,5.261141 7.297717,6.279431 6.910764,-0.908031 12.898287,-1.527428 4.921713,-0.509141 14.256001,-1.018287 14.256001,-1.018287"
+       id="path3"
+       sodipodi:nodetypes="cssc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-opacity:1;stroke-dasharray:none"
+       d="m 60.757393,33.181908 c 0,0 5.437376,-0.962811 11.20114,5.261141 6.735783,7.273578 8.241441,1.401849 12.898287,-0.339428 3.122602,-1.167597 14.595428,-1.52743 14.595428,-1.52743"
+       id="path3-1"
+       sodipodi:nodetypes="cssc" />
+    <path
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"
+       d="m 60.757393,35.81199 c 0,0 5.919658,-0.988557 11.20114,5.261141 9.852904,11.659166 8.62224,4.330713 13.40743,0.678858 1.509494,-1.151983 4.734728,-1.160221 6.190011,-1.536943 4.762249,-1.232778 8.235705,-1.348201 8.235705,-1.348201 m -39.033965,1.953686 c 0,0 6.052168,-1.098172 11.20114,5.261141 12.738047,15.732309 8.004533,-0.179688 14.59543,-0.848571 5.216875,-0.529439 9.812501,-6.035337 12.55886,-3.564001"
+       id="path3-1-5"
+       sodipodi:nodetypes="csssccssc" />
+    <path
+       style="font-variation-settings:normal;display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#f60000;stroke-width:0.4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.4, 1.2;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 65.339998,39.713144 77.898857,22.402286 94.021712,41.58"
+       id="path5"
+       sodipodi:nodetypes="ccc" />
+  </g>
+</svg>
