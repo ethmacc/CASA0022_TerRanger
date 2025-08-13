@@ -227,8 +227,13 @@ class _SampleDetailState extends State<SampleDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Sample Data Viewer'),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
       ),
       bottomNavigationBar: BottomNavbar(),
       floatingActionButton: FloatingActionButton(
@@ -413,13 +418,12 @@ class _SampleDetailState extends State<SampleDetail> {
                           initialZoom: 9,
                         ) :
                         MapOptions(
-                          initialCameraFit: CameraFit.bounds(bounds: bounds),
+                          initialCameraFit: CameraFit.bounds(bounds: bounds, padding: EdgeInsets.all(25)),
                         ),
                         children: [
                           TileLayer(
                             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                           ),
-                          MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.blueAccent,))]),
                           PolylineLayer(
                             polylines: routeCoords.isNotEmpty ? [Polyline(
                               points: routeCoords,
@@ -427,6 +431,7 @@ class _SampleDetailState extends State<SampleDetail> {
                               strokeWidth: 5,
                               )] :
                             <Polyline<Object>> []),
+                          MarkerLayer(markers: [Marker(point: routeCoords[(selected-1).floor()], child: Icon(Icons.location_on, color: Colors.deepOrangeAccent,))]),
                           RichAttributionWidget(attributions: [
                             TextSourceAttribution('OpenStreetMap contributors')
                           ])

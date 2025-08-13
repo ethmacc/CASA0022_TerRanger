@@ -38,20 +38,18 @@ class BottomNavbar extends StatelessWidget{
               MaterialPageRoute(builder: (context) => HomePage(title: 'Home: Your Hikes'))
             );
           case 1:
-            pushTakePicPage();
-          case 2:
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ScanPage())
             );
-          case 3:
+          case 2:
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const BackupPage())
             );
         }
       },
-      indicatorColor: Colors.amber,
+      indicatorColor: Colors.white,
       selectedIndex: currentPage.getIndex,
       destinations: <Widget>[
         NavigationDestination(
@@ -59,10 +57,10 @@ class BottomNavbar extends StatelessWidget{
           icon: Icon(Icons.home_outlined),
           label: 'Home',
         ),
-        NavigationDestination(
-          icon: Icon(Icons.camera), 
-          label: 'Camera'
-        ),
+        //NavigationDestination(
+          //icon: Icon(Icons.camera), 
+          //label: 'Camera'
+        //),
         NavigationDestination(
           icon: !connManager.isConnected ? Icon(Icons.bluetooth) : Badge(backgroundColor:Colors.green, child: Icon(Icons.bluetooth)),
           label: 'Devices'
@@ -71,7 +69,8 @@ class BottomNavbar extends StatelessWidget{
         NavigationDestination(
           icon: Icon(Icons.file_download), 
           label: 'Backups'
-        )
+        ),
+        Padding(padding: EdgeInsets.all(20))
       ],
     );
   }

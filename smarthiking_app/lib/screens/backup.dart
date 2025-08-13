@@ -27,8 +27,13 @@ class _BackupPageState extends State<BackupPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Backups'),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
       ),
       body: Center(
         child: Column(
@@ -39,8 +44,8 @@ class _BackupPageState extends State<BackupPage> {
                 exportBackup();
               }, 
               style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green),
-                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
+                backgroundColor: WidgetStatePropertyAll<Color>(const Color.fromARGB(255, 236, 236, 236)),
+                foregroundColor: WidgetStatePropertyAll<Color>(Colors.green),
               ),
               icon: Icon(Icons.ios_share),
             ),
@@ -51,8 +56,8 @@ class _BackupPageState extends State<BackupPage> {
                 importBackup();
               }, 
               style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(Colors.red),
-                foregroundColor: WidgetStatePropertyAll<Color>(Colors.white),
+                backgroundColor: WidgetStatePropertyAll<Color>(const Color.fromARGB(255, 236, 236, 236)),
+                foregroundColor: WidgetStatePropertyAll<Color>(Colors.red),
               ),
               icon: Icon(Icons.download),
             ),

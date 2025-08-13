@@ -46,7 +46,15 @@ class TakePicturePageState extends State<TakePicturePage> {
     ConnManager connManager = Provider.of<ConnManager>(context, listen:false);
 
     return Scaffold( 
-      appBar: AppBar(title: const Text("Take a picture"),),
+      appBar: AppBar(
+        title: const Text("Take a picture"),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
+        ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder:(context, snapshot) {

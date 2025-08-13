@@ -27,7 +27,23 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'TerRanger',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lime),
+        fontFamily: 'Bahnschrift',
+        colorScheme: ColorScheme.light(
+          primary: Colors.deepOrangeAccent,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.lime,
+          titleTextStyle: TextStyle(
+            fontFamily: 'BebasNeue',
+            fontSize: 32,
+          )
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.lime
+        ),
+        sliderTheme: SliderThemeData(
+          inactiveTrackColor: Color.fromARGB(255, 236, 236, 236)
+        )
       ),
       home: HomePage(title:'Home: Your Hikes'),
     );

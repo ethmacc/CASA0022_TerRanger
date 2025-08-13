@@ -136,8 +136,9 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
           _mapController.fitCamera(
               CameraFit.bounds(bounds: LatLngBounds(
                   LatLng(southTween.evaluate(animation), westTween.evaluate(animation)),
-                  LatLng(northTween.evaluate(animation), eastTween.evaluate(animation))
-                  )
+                  LatLng(northTween.evaluate(animation), eastTween.evaluate(animation)),
+                  ),
+                  padding: EdgeInsets.all(50)
                 )
               );
         });    
@@ -173,8 +174,13 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Hike Details'),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
       ),
       bottomNavigationBar: BottomNavbar(),
       floatingActionButton: FloatingActionButton(
@@ -302,7 +308,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                           initialZoom: 12,
                         ) :
                         MapOptions(
-                          initialCameraFit: CameraFit.bounds(bounds: bounds),
+                          initialCameraFit: CameraFit.bounds(bounds: bounds, padding: EdgeInsets.all(50)),
                         ),
                         mapController: _mapController,
                         children: isHikeActive ? [
@@ -425,7 +431,7 @@ class _HikeDetailState extends State<HikeDetail> with TickerProviderStateMixin{
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => SampleDetail(hikeId: widget.hikeID, initialSamples: allSamples,)));
                                 }, 
                                 style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll<Color>(Colors.grey),
+                                  backgroundColor: WidgetStatePropertyAll<Color>(Colors.lime),
                                   foregroundColor: WidgetStatePropertyAll<Color>(Colors.white)
                                   ),
                                 child: Text('View data samples >'),

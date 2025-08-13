@@ -55,8 +55,13 @@ class _ScanPageState extends State<ScanPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Connection Manager'),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
       ),
       body: Center(
         child: Column(

@@ -18,8 +18,13 @@ class _EnterHikeState extends State<EnterHike> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Enter New Hike'),
+        actions: [
+          Image(
+            image: AssetImage('assets/terraenger_logo.png'),
+            width: 100,
+            )
+        ],
       ),
       body: Center(
         child: Column(
