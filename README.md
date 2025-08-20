@@ -120,11 +120,11 @@ The following key libraries were used in the Arduino code:
 
 | **Library**       | **Purpose**                                |
 |-----------------------|--------------------------------------------|
-| [vector](https://docs.arduino.cc/libraries/vector/) | Used for [Gyroscopic compensation](Gyroscopic-compensation) |
+| [vector](https://docs.arduino.cc/libraries/vector/) | Used for [Gyroscopic compensation](#Gyroscopic-compensation) |
 | [Wire](https://docs.arduino.cc/language-reference/en/functions/communication/wire/) | Required for I2C communication between the LiDAR sensors and the MCU |
 | [SparkFun_VL53L5CX_Library](https://docs.arduino.cc/libraries/sparkfun-vl53l5cx-arduino-library/) | Required to interface with the firmware for the VL53L5CX |
 | [ArduinoBLE](https://docs.arduino.cc/libraries/arduinoble/) | Used to set a device name and create a BLE characteristic that the data from the sensors can be written to |
-| [Arduino_LSM9DS1](https://docs.arduino.cc/libraries/arduino_lsm9ds1/) | To interface with the LSM9DS1 IMU, used for [Gyroscopic compensation](Gyroscopic-compensation) |
+| [Arduino_LSM9DS1](https://docs.arduino.cc/libraries/arduino_lsm9ds1/) | To interface with the LSM9DS1 IMU, used for [Gyroscopic compensation](#Gyroscopic-compensation) |
 
 #### Sensor tuning
 
