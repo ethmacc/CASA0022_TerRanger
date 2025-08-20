@@ -176,7 +176,7 @@ The key libraries that have been used in the code are:
 | [sqflite](https://pub.dev/packages/sqflite) | To persist data in the background in the form of a SQL database |
 | [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) | to display a map widget |
 | [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) | to get the position of the user when a sample is taken |
-| [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditred](https://pub.dev/packages/ditredi) | To manipulate and visualize the data from the sensors |
+| [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditredi](https://pub.dev/packages/ditredi) | To manipulate and visualize the data from the sensors |
 | [share_plus](https://pub.dev/packages/share_plus) | to provide backup functionality for the local SQL database where the data is stored |
 
 #### Developer setup
