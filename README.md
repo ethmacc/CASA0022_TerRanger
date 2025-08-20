@@ -1,4 +1,7 @@
 # CASA0022 TerRanger
+
+![IMG_0298 (1)](https://github.com/user-attachments/assets/7553a84d-4ab7-4be7-8c9f-f8f5ce391823)
+
 ## Contents
 1. [Introduction](#Introduction)
 3. [Materials](#Materials)
