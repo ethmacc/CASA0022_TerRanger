@@ -70,12 +70,14 @@ The Arduino C++ code for the device is provided in the following folders:
 The enclosure can be printed by exporting the various components from the Fusion360 file in ```Models/3D/```. Ensure the 3D models are printed with sufficiently high quality settings for the best results. M3 screws and bolts should be used to secure the two halves of the enclosure together.
 
 <img width="600" alt="Screenshot 2025-08-11 183940" src="https://github.com/user-attachments/assets/1ecd7a76-f036-40e4-9649-8b49062c78bf" />
+
 *Fusion360 model of the device enclosure*
 
 ### Mobile Application
 The Mobile Application was designed initially in Figma and then realised with Flutter.
 
 <img width="1000" height="1696" alt="Mobile Application Wireframe" src="https://github.com/user-attachments/assets/72d19678-198f-45e2-9958-1e8d21ae8d8f" />
+
 *Wireframe for the TerRanger Mobile Application, designed in Figma*
 
 
