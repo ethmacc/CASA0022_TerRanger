@@ -2,9 +2,7 @@
 1. [Introduction](#Introduction)
 3. [Materials](#Materials)
 4. [Quickstart](#Quickstart)
-5. [Sensor Tuning](#Sensor-tuning)
-6. [Mobile Application](#Mobile-application)
-7. [Edge AI model](#Edge-ai-model)
+5. [Advanced Setup](#Advanced-setup)
 8. [Future Work](#future-work)
 9. [External Links](#External-links)
 
@@ -19,6 +17,7 @@ This repository contains the code and 3D models required to build the TerRanger 
 You will need the following materials:
 - A 3D printer (with nozzle size no larger than 0.4mm) & filament
 - A UV printer (optional)
+- An Arduino Nano BLE 33 Sense (rev1 was used in this build, but rev2 can probably also be used with some modifications)
 - Protoboard or stripboard
 - Electrical wire
 - A capacitor (at least 33µF)
@@ -36,12 +35,41 @@ You will need the following materials:
 - An Android smartphone
 
 ## Quickstart
+### Hardware
+To construct the electronics, the protoboard/stripboard should first be cut to the dimensions 51mm x 62mm. Then, construct the circuit can be constructed using the following breadboard and schematic as a guide:
 
-## Sensor Tuning
+<img width="600" alt="circuit_diagram_bb" src="https://github.com/user-attachments/assets/1d508ac4-93e4-48ac-977b-1d2bde71f53d" />
+*Fritzing breadboard diagram*
 
-## Mobile Application
+<img width="600" alt="circuit_diagram_schem" src="https://github.com/user-attachments/assets/7689529b-ce41-41d2-ba7a-9bcc32572af9" />
+*Fritzing circuit schematic*
 
-## Edge AI model
+The circuit contains a number of subcircuits for the following components:
+1. LiDAR sensors - these should be attached using JST-SH cables can for ease of maintenance and disassembly. However, if you wish, they can also be connected with solder joints. Ensure that the four individal lines of the JST-SH connection are connected to the appropriate pins of the Nano 33 MCU (3v, ground, I2C - SDA & SCL). The green lines in the breadboard diagram denote the LPn connections, and these MUST be connected to the MCU at the appropriate pins to allow for the individual I2C addresses for each sensor to be assigned correctly.
+2. Tactile button - this is connected using a standard click button circuit (https://docs.arduino.cc/built-in-examples/digital/Button/) to receive a signal when the button is pressed. The 10kΩ resistor is used here
+3. 5V step-up - this part of the circuit boosts the 3.7V of the LiPo battery to 5V so that it can be fed into the Nano 33's VIN pin. The 33µF capacitor is used here to provide some smoothing when the toggle switch is turned on.
+4. LiPo charger - this charges the LiPo battery whilst also providing 3.7V from the battery to the 5V step-up. Note that the orientation of the ports should be the same direction as the Nano 33's micro-usb port. This was done for ease of maintenance
+
+The following real images can also be used as a reference in the protoboard construction:
+<img width="600" alt="protoboard" src="https://github.com/user-attachments/assets/cdb39e1e-ae4c-45c8-98e2-f6d8b0c20d3b" />
+*Protoboard initial build*
+
+<img width="600" alt="protoboard in enclosure" src="https://github.com/user-attachments/assets/744674f6-6f58-4ba2-90db-b6dc672778fe" />
+*Protoboard fully connected to components and placed in enclosure*
+
+### Software
+
+### Enclosure
+
+### Mobile Application
+
+## Advanced Setup
+
+### Sensor Tuning
+
+### Edge AI model
+
+### Mobile Application
 
 ## Future Work
 
