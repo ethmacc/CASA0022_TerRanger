@@ -105,7 +105,18 @@ Once the device has been assembled and the mobile application installed on your 
 
 This section is intended for advanced makers to provide further details on the TerRanger system and how these can be modified.
 
-### Software / Sensor Tuning
+### Software
+
+#### Dependencies
+
+The following key libraries were used in the Arduino code:
+- [vector](https://docs.arduino.cc/libraries/vector/) - used for [Gyroscopic compensation](Gyroscopic-compensation)
+- [Wire](https://docs.arduino.cc/language-reference/en/functions/communication/wire/) - required for I2C communication between the LiDAR sensors and the MCU
+- [SparkFun_VL53L5CX_Library](https://docs.arduino.cc/libraries/sparkfun-vl53l5cx-arduino-library/) - required to interface with the firmware for the VL53L5CX
+- [ArduinoBLE](https://docs.arduino.cc/libraries/arduinoble/) - used to set a device name and create a BLE characteristic that the data from the sensors can be written to
+- [Arduino_LSM9DS1](https://docs.arduino.cc/libraries/arduino_lsm9ds1/) - to interface with the LSM9DS1 IMU, used for [Gyroscopic compensation](Gyroscopic-compensation)
+
+#### Sensor tuning
 
 <img width="600" alt="Image of two VL53L5CX sensors attached to the circuit" src="https://github.com/user-attachments/assets/2b81c369-8711-43cd-92a5-43577d9bcf48" />
 
@@ -117,7 +128,11 @@ The VL53L5CX sensors can be tuned to change their sampling frequency, distance a
 - ```SparkFun_VL53L5CX.setRangingMode()``` to set ranging mode. It is possible to select either continuous or autonomous. Continuous uses more power but is more frequent.
 - ```SparkFun_VL53L5CX..setRangingFrequency()``` to set ranging frequency in continous mode. This has been set to the maximum of 60Hz in the code, to minimize lag time.
 
-For more information, see the Sparkfun VL53L5CX library and VL53L5CX datasheet and manual under [External Links](#External-links))
+For more information, see the Sparkfun VL53L5CX library GitHub repo and VL53L5CX datasheet and manual under [External Links](#External-links))
+
+#### Gyroscopic compensation
+
+The walking stick could be oriented in a direction that is not orthogonal to the ground plane when a sample is taken. Therefore the vector library was used, and the functions ```calculatePitch``` and ```calculateYaw``` make use of this and the [acceleration to pitch & yaw forumla](https://wiki.dfrobot.com/How_to_Use_a_Three-Axis_Accelerometer_for_Tilt_Sensing) to convert the accelerometer readings to pitch and yaw angles in degrees. These angles are transmitted to the mobile application via Bluetooth.
 
 ### Edge AI model
 
@@ -137,6 +152,20 @@ Using Edge Impulse, it is possible to clone the project and train it on your own
 
 ### Mobile Application
 
+#### Dependencies
+
+The key libraries that have been used in the code are:
+- [flutter_reactive_ble](https://pub.dev/packages/flutter_reactive_ble) - for establishing the Bluetooth Low Energy connection to the device
+- [permission_handler](https://pub.dev/packages/permission_handler) - for handling location and Bluetooth permissions
+- [provider](https://pub.dev/packages/provider) - to provide [app state management](https://docs.flutter.dev/get-started/fundamentals/state-management)
+- [sqflite](https://pub.dev/packages/sqflite) - to persist data in the background in the form of a SQL database
+- [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) - to display a map widget 
+- [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) - to get the position of the user when a sample is taken
+- [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditred](https://pub.dev/packages/ditredi) - To manipulate and visualize the data from the sensors
+- [share_plus](https://pub.dev/packages/share_plus) - to provide backup functionality for the local SQL database where the data is stored
+
+#### Developer setup
+
 If you wish to develop the mobile application further, first clone this entire repository with:
 
 ```git clone https://github.com/ethmacc/CASA0022_TerRanger/```
@@ -147,10 +176,26 @@ After which, run the following command to fix and issues in the code and install
 
 ```flutter pub get```
 
-The following libraries have been used in the code:
-- [flutter_reactive_ble](https://pub.dev/packages/flutter_reactive_ble)
+#### Algorithms
+The distance array (from the VL53L5CX sensors) to point-cloud algorithm is based on scaling a list of vectors that point to each of the grid points in the sensor's field of view. This was tested and visualised initially in the Python notebooks  ```/Data/byte_decoder.ipynb``` and ```/Data/byte_decoder_4x4.ipynb```, which can also be used for further development.
+
+<img width="600" alt="newplot (1)" src="https://github.com/user-attachments/assets/a646868b-aab6-4727-bccd-2a108ee6db6b" />
+
+*The vector list visualised as a vector field using plotly in the Python notebook*
+
+The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) method and formula:
+
+<img width="600" alt="Screenshot 2025-08-10 201159" src="https://github.com/user-attachments/assets/7b2805a5-7fc5-4cd2-86aa-759692a3857f" />
+
+*Diagram illustraing the CSA method, taken from [Olive and Marion (2007)](https://www-sciencedirect-com.libproxy.ucl.ac.uk/science/article/pii/S0301479708002867)*
 
 ## Future Work
+A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the pojrect might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
+
+<img width="400" alt="Screenshot 2025-08-18 151321" src="https://github.com/user-attachments/assets/3983a2cd-4c11-4adc-b175-80f2d3d4c0ac" />
+<img width="400" alt="Screenshot 2025-08-18 151558" src="https://github.com/user-attachments/assets/5d66ea2f-5f79-4d3f-b1fe-7517f5599325" />
+
+*PCB design schematic (left) and 3D model (right)*
 
 ## External Links
 
