@@ -39,9 +39,11 @@ You will need the following materials:
 To construct the electronics, the protoboard/stripboard should first be cut to the dimensions 51mm x 62mm. Then, construct the circuit can be constructed using the following breadboard and schematic as a guide:
 
 <img width="600" alt="circuit_diagram_bb" src="https://github.com/user-attachments/assets/1d508ac4-93e4-48ac-977b-1d2bde71f53d" />
+
 *Fritzing breadboard diagram*
 
 <img width="600" alt="circuit_diagram_schem" src="https://github.com/user-attachments/assets/7689529b-ce41-41d2-ba7a-9bcc32572af9" />
+
 *Fritzing circuit schematic*
 
 The circuit contains a number of subcircuits for the following components:
@@ -52,9 +54,11 @@ The circuit contains a number of subcircuits for the following components:
 
 The following real images can also be used as a reference in the protoboard construction:
 <img width="600" alt="protoboard" src="https://github.com/user-attachments/assets/cdb39e1e-ae4c-45c8-98e2-f6d8b0c20d3b" />
+
 *Protoboard initial build*
 
 <img width="600" alt="protoboard in enclosure" src="https://github.com/user-attachments/assets/744674f6-6f58-4ba2-90db-b6dc672778fe" />
+
 *Protoboard fully connected to components and placed in enclosure*
 
 ### Software
