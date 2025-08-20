@@ -71,6 +71,12 @@ The following real images can also be used as a reference in the protoboard cons
 
 *Protoboard fully connected to components and placed in enclosure*
 
+The current draw of the circuit was measured and found to be 0.25A, giving the device an approximate endurance of about 8 hours.
+
+<img width="600" alt="Circuit current draw as measured with a multimeter" src="https://github.com/user-attachments/assets/5cad3d94-8ff0-43e1-9025-71304b37412d" />
+
+*Circuit current draw as measured with a multimeter*
+
 ### Software
 The Arduino C++ code for the device is provided in the following folders:
 - ```Arduino/DistanceArray_main``` - Push this version to the Nano 33 for the initial device that uses the manual tactile button to trigger the LiDAR sensors to take a sample
@@ -82,6 +88,13 @@ The enclosure can be printed by exporting the various components from the Fusion
 <img width="600" alt="Screenshot 2025-08-11 183940" src="https://github.com/user-attachments/assets/1ecd7a76-f036-40e4-9649-8b49062c78bf" />
 
 *Fusion360 model of the device enclosure*
+
+The Fusion360 model can also be used as a reference to attach the electronics inside the enclosure correctly. The 2000mAh LiPo battery should be placed behind the protoboard, and can be pushed into place with a felt ribbon to make removing it easier:
+
+<img width="400" src="https://github.com/user-attachments/assets/c41aa2ca-3e7c-4300-93bd-31c641a8a613" />
+<img width="400" src="https://github.com/user-attachments/assets/9f265dde-88ad-4963-b412-de7a03ded52" />
+
+*Removing the battery from the device with a felt ribbon*
 
 If you wish, and have access to a UV printer, you can apply the decals found in ```Models/2D``` to the front face of the enclosure.
 
