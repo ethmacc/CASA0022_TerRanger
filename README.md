@@ -296,9 +296,21 @@ https://studio.edgeimpulse.com/public/732758/live
 
 ## References
 
+### In text
+
 Asphalt Industry Alliance. (2024). Annual Local Authority Road Maintenance Survey Report. 2024.
 
 Olive, N. D. and Marion, J. L. (2009). ‘The influence of use-related, environmental, and managerial factors on soil loss from recreational trails’. Journal of Environmental Management, 90 (3), pp. 1483–1493. doi: 10.1016/j.jenvman.2008.10.004.
+
+### Code snippets & tutorials
+
+Makadiya, K (2024). *Flutter Pull to Refresh: How to Implement, Customize, and Handle Errors. Dhiwise.com*. Available at: https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize (Accessed 20 Aug. 2025).
+
+Lee, S. (2024). *Safely Backing Up Sqlflite in Flutter. Medium*. Available at: https://medium.com/@soojlee0701/safely-backing-up-sqlflite-in-flutter-120718588dd5 (Accessed 20 Aug. 2025).
+
+Nitesh (2021). *Flutter polyline distance with google_maps_flutter plugin. Stack Overflow*. Available at: https://stackoverflow.com/questions/66181115/flutter-polyline-distance-with-google-maps-flutter-plugin (Accessed 21 Aug. 2025).
+
+VitLit (2019). *Center poly line google maps plugin flutter fit to screen google map. Stack Overflow*. Available at: https://stackoverflow.com/questions/57986855/center-poly-line-google-maps-plugin-flutter-fit-to-screen-google-map (Accessed 21 Aug. 2025).
 
 ## Contact
 If you have any suggestions or would like to contribute to this project, please submit a pull request and/or contact me using my social links on my profile
