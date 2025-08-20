@@ -1,4 +1,5 @@
 # CASA0022 TerRanger
+## Contents
 1. [Introduction](#Introduction)
 3. [Materials](#Materials)
 4. [Quickstart](#Quickstart)
@@ -32,6 +33,8 @@ You will need the following materials:
 - Assorted M2 screws and bolts
 - Washers
 - Pin headers and sockets
+- Velcro strap
+- A walking stick for hiking
 - An Android smartphone
 
 ## Quickstart
@@ -73,6 +76,8 @@ The enclosure can be printed by exporting the various components from the Fusion
 
 *Fusion360 model of the device enclosure*
 
+If you wish, and have access to a UV printer, you can apply the decals found in ```Models/2D``` to the front face of the enclosure.
+
 ### Mobile Application
 The Mobile Application was designed initially in Figma and then realised with Flutter.
 
@@ -88,6 +93,13 @@ The Mobile Application was designed initially in Figma and then realised with Fl
 *Screens from the finished Flutter build*
 
 To download the latest version of the application, navigate to the Releases tab (https://github.com/ethmacc/CASA0022_TerRanger/releases) and download the latest release.
+
+### Device Operation
+Once the device has been assembled and the mobile application installed on your Android smartphone, follow these steps to prepare the device for use:
+1. Thread the velcro strap through the slots in the bracket at the back of the enclosure. Use these to securely attach the TerRanger device to your hiking stick
+2. Switch on TerRanger by flipping the toggle switch at the top of the enclosure and wait for a few seconds for the startup routine to complete
+3. Pair the device by navigating to the ```Devices``` screen in the mobile application and pressing the ```Connect to device``` button.
+4. Once done, use the red-orange centre button in the middle of the bottom app bar to create a new hike and start collecting data
 
 ## Advanced Setup
 
