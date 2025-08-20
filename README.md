@@ -298,9 +298,9 @@ https://studio.edgeimpulse.com/public/732758/live
 
 ### In text
 
-Asphalt Industry Alliance. (2024). Annual Local Authority Road Maintenance Survey Report. 2024.
+Asphalt Industry Alliance. (2024). *Annual Local Authority Road Maintenance Survey Report*. 2024.
 
-Olive, N. D. and Marion, J. L. (2009). ‘The influence of use-related, environmental, and managerial factors on soil loss from recreational trails’. Journal of Environmental Management, 90 (3), pp. 1483–1493. doi: 10.1016/j.jenvman.2008.10.004.
+Olive, N. D. and Marion, J. L. (2009). *‘The influence of use-related, environmental, and managerial factors on soil loss from recreational trails’. Journal of Environmental Management*, 90 (3), pp. 1483–1493. doi: 10.1016/j.jenvman.2008.10.004.
 
 ### Code snippets & tutorials
 
