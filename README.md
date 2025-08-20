@@ -168,6 +168,10 @@ For more information, see the Sparkfun VL53L5CX library GitHub repo and VL53L5CX
 
 The walking stick could be oriented in a direction that is not orthogonal to the ground plane when a sample is taken. Therefore the vector library was used, and the functions ```calculatePitch``` and ```calculateYaw``` make use of this and the [acceleration to pitch & yaw forumla](https://wiki.dfrobot.com/How_to_Use_a_Three-Axis_Accelerometer_for_Tilt_Sensing) to convert the accelerometer readings to pitch and yaw angles in degrees. These angles are transmitted to the mobile application via Bluetooth.
 
+#### Bluetooth
+
+The device connects to the mobile application via Bluetooth Low Energy, using the Arduino BLE library. The buffer size (for transmitting data) has been set up dynamically using variables to ensure it will change should you choose to set the VL53L5CX to the 8x8 resolution (it is set to 4x4 by default and in the code). Note that this may also require changes to the peripheral BLE device code in the mobile application as it is currently configured to receive the appropriate number of btyes for the 4x4 resolution, not the 8x8.
+
 ### Edge AI model
 
 If you elect to use the gesture recognition version of the Arduino code in ```Arduino/DistanceArray_ai/```, you will find that it uses a TinyML or Edge AI model to power the gesture recognition functionality. The model embedded in the code as a library is a Convolutional Neural Network (CNN), that has been trained on accelerometer data from performing the gesture of double tapping the hiking stick on the ground.
