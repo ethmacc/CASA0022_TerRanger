@@ -85,6 +85,11 @@ The Arduino C++ code for the device is provided in the following folders:
 ### Enclosure
 The enclosure can be printed by exporting the various components from the Fusion360 file in ```Models/3D/```. Ensure the 3D models are printed with sufficiently high quality settings for the best results. The black charging port cover (in the image below) should be printed with flexible polymer, such as TPU. M2 screws and bolts should be used to secure the two halves of the enclosure together.
 
+<img width="400" alt="TPU charging port cover 1" src="https://github.com/user-attachments/assets/6adae5cf-33c3-4fad-bc14-7aea9e8ed17c" />
+<img width="400" alt="TPU charging port cover 2" src="https://github.com/user-attachments/assets/b24e9534-fc31-4beb-8670-51952b481e56" />
+
+*TPU charging port cover*
+
 <img width="600" alt="Screenshot 2025-08-11 183940" src="https://github.com/user-attachments/assets/1ecd7a76-f036-40e4-9649-8b49062c78bf" />
 
 *Fusion360 model of the device enclosure*
@@ -97,6 +102,10 @@ The Fusion360 model can also be used as a reference to attach the electronics in
 *Removing the battery from the device with a felt ribbon*
 
 If you wish, and have access to a UV printer, you can apply the decals found in ```Models/2D``` to the front face of the enclosure.
+
+![IMG_0189](https://github.com/user-attachments/assets/d02e2136-4094-44c9-ab57-7bc98b48979d)
+
+*Developing the UV print design*
 
 ### Mobile Application
 The Mobile Application was designed initially in Figma and then realised with Flutter.
