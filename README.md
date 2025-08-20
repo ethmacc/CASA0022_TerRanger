@@ -92,7 +92,7 @@ The Mobile Application was designed initially in Figma and then realised with Fl
 
 *Screens from the finished Flutter build*
 
-To download the latest version of the application, navigate to the Releases tab (https://github.com/ethmacc/CASA0022_TerRanger/releases) and download the latest release.
+To download the latest version of the application, navigate to the [Releases tab](https://github.com/ethmacc/CASA0022_TerRanger/releases) and download the latest release.
 
 ### Device Operation
 Once the device has been assembled and the mobile application installed on your Android smartphone, follow these steps to prepare the device for use:
