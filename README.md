@@ -174,10 +174,10 @@ The key libraries that have been used in the code are:
 | [permission_handler](https://pub.dev/packages/permission_handler) | For handling location and Bluetooth permissions |
 | [provider](https://pub.dev/packages/provider) | To provide [app state management](https://docs.flutter.dev/get-started/fundamentals/state-management) |
 | [sqflite](https://pub.dev/packages/sqflite) | To persist data in the background in the form of a SQL database |
-| [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) | to display a map widget |
-| [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) | to get the position of the user when a sample is taken |
+| [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) | To display a map widget |
+| [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) | To get the position of the user when a sample is taken |
 | [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditredi](https://pub.dev/packages/ditredi) | To manipulate and visualize the data from the sensors |
-| [share_plus](https://pub.dev/packages/share_plus) | to provide backup functionality for the local SQL database where the data is stored |
+| [share_plus](https://pub.dev/packages/share_plus) | To provide backup functionality for the local SQL database where the data is stored |
 
 #### Developer setup
 
@@ -223,7 +223,7 @@ The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) me
 *Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](#references)*
 
 ## Future Work
-A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the project might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
+A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the project might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components.
 
 <img width="400" alt="Screenshot 2025-08-18 151321" src="https://github.com/user-attachments/assets/3983a2cd-4c11-4adc-b175-80f2d3d4c0ac" />
 <img width="400" alt="Screenshot 2025-08-18 151558" src="https://github.com/user-attachments/assets/5d66ea2f-5f79-4d3f-b1fe-7517f5599325" />
@@ -232,7 +232,7 @@ A PCB design was developed towards the end of the project, but this was not manu
 
 It may also be possible to upgrade the sensors, which during testing were found to be less accurate than desired. The VL53L8CX, an improved model that is more able to cope with environmental factors such as high ambient light, is just starting to become more widely available.
 
-Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)](#references).
+Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)].(#references).
 
 ## External Links
 
