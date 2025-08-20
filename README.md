@@ -77,7 +77,7 @@ The Arduino C++ code for the device is provided in the following folders:
 - ```Arduino/DistanceArray_ai``` - Push this version to the Nano 33 for the later device that uses gesture recognition (a double tap of the walking stick) to trigger the LiDAR sensors to take a sample
 
 ### Enclosure
-The enclosure can be printed by exporting the various components from the Fusion360 file in ```Models/3D/```. Ensure the 3D models are printed with sufficiently high quality settings for the best results. M2 screws and bolts should be used to secure the two halves of the enclosure together.
+The enclosure can be printed by exporting the various components from the Fusion360 file in ```Models/3D/```. Ensure the 3D models are printed with sufficiently high quality settings for the best results. The black charging port cover (in the image below) should be printed with flexible polymer, such as TPU. M2 screws and bolts should be used to secure the two halves of the enclosure together.
 
 <img width="600" alt="Screenshot 2025-08-11 183940" src="https://github.com/user-attachments/assets/1ecd7a76-f036-40e4-9649-8b49062c78bf" />
 
