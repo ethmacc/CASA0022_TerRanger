@@ -103,6 +103,8 @@ Once the device has been assembled and the mobile application installed on your 
 
 ## Advanced Setup
 
+This section is intended for advanced makers to provide further details on the TerRanger system and how these can be modified.
+
 ### Sensor Tuning
 
 ### Edge AI model
