@@ -9,6 +9,7 @@
 5. [Advanced Setup](#Advanced-setup)
 8. [Future Work](#future-work)
 9. [External Links](#External-links)
+10. [References](#References)
 
 ## Introduction
 ### Demo Film
@@ -53,7 +54,15 @@ To construct the electronics, the protoboard/stripboard should first be cut to t
 *Fritzing circuit schematic*
 
 The circuit contains a number of subcircuits for the following components:
-- **LiDAR sensors** - these should be attached using JST-SH cables can for ease of maintenance and disassembly. However, if you wish, they can also be connected with solder joints. Ensure that the four individal lines of the JST-SH connection are connected to the appropriate pins of the Nano 33 MCU (3v, ground, I2C - SDA & SCL). The green lines in the breadboard diagram denote the LPn connections, and these MUST be connected to the MCU at the appropriate pins to allow for the individual I2C addresses for each sensor to be assigned correctly.
+
+| **Component subcircuit**       | **Meaning**                                |
+|-----------------------|--------------------------------------------|
+| LiDAR sensors | These should be attached using JST-SH cables can for ease of maintenance and disassembly. However, if you wish, they can also be connected with solder joints. Ensure that the four individal lines of the JST-SH connection are connected to the appropriate pins of the Nano 33 MCU (3v, ground, I2C - SDA & SCL). The green lines in the breadboard diagram denote the LPn connections, and these MUST be connected to the MCU at the appropriate pins to allow for the individual I2C addresses for each sensor to be assigned correctly. |
+| Tactile button | This is connected using a [standard click button circuit](https://docs.arduino.cc/built-in-examples/digital/Button/) to receive a signal when the button is pressed. The 10kΩ resistor is used here. |
+| 5V step-up | This part of the circuit boosts the 3.7V of the LiPo battery to 5V so that it can be fed into the Nano 33's VIN pin. The 33µF capacitor is used here to provide some smoothing when the toggle switch is turned on. |
+| LiPo charger | This charges the LiPo battery whilst also providing 3.7V from the battery to the 5V step-up. Note that the orientation of the ports should be the same direction as the Nano 33's micro-usb port. This was done for ease of maintenance |
+
+- **LiDAR sensors** - 
 - **Tactile button** - this is connected using a [standard click button circuit](https://docs.arduino.cc/built-in-examples/digital/Button/) to receive a signal when the button is pressed. The 10kΩ resistor is used here
 - **5V step-up** - this part of the circuit boosts the 3.7V of the LiPo battery to 5V so that it can be fed into the Nano 33's VIN pin. The 33µF capacitor is used here to provide some smoothing when the toggle switch is turned on.
 - **LiPo charger** - this charges the LiPo battery whilst also providing 3.7V from the battery to the 5V step-up. Note that the orientation of the ports should be the same direction as the Nano 33's micro-usb port. This was done for ease of maintenance
