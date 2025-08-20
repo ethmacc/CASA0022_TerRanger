@@ -43,7 +43,7 @@ You will need the following materials:
 
 ## Quickstart
 ### Hardware
-To construct the electronics, the protoboard/stripboard should first be cut to the dimensions 51mm x 62mm. Then, construct the circuit can be constructed using the following breadboard and schematic as a guide:
+To construct the electronics, the protoboard/stripboard should first be cut to the dimensions 51mm x 62mm. Then, the circuit can be constructed using the following breadboard and schematic as a guide:
 
 <img width="600" alt="circuit_diagram_bb" src="https://github.com/user-attachments/assets/1d508ac4-93e4-48ac-977b-1d2bde71f53d" />
 
