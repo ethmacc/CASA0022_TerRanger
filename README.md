@@ -54,9 +54,11 @@ The circuit contains a number of subcircuits for the following components:
 
 The following real images can also be used as a reference in the protoboard construction:
 <img width="600" alt="protoboard" src="https://github.com/user-attachments/assets/cdb39e1e-ae4c-45c8-98e2-f6d8b0c20d3b" />
+
 *Protoboard initial build*
 
 <img width="600" alt="protoboard in enclosure" src="https://github.com/user-attachments/assets/744674f6-6f58-4ba2-90db-b6dc672778fe" />
+
 *Protoboard fully connected to components and placed in enclosure*
 
 ### Software
