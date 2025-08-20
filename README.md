@@ -47,10 +47,10 @@ To construct the electronics, the protoboard/stripboard should first be cut to t
 *Fritzing circuit schematic*
 
 The circuit contains a number of subcircuits for the following components:
-1. LiDAR sensors - these should be attached using JST-SH cables can for ease of maintenance and disassembly. However, if you wish, they can also be connected with solder joints. Ensure that the four individal lines of the JST-SH connection are connected to the appropriate pins of the Nano 33 MCU (3v, ground, I2C - SDA & SCL). The green lines in the breadboard diagram denote the LPn connections, and these MUST be connected to the MCU at the appropriate pins to allow for the individual I2C addresses for each sensor to be assigned correctly.
-2. Tactile button - this is connected using a standard click button circuit (https://docs.arduino.cc/built-in-examples/digital/Button/) to receive a signal when the button is pressed. The 10kΩ resistor is used here
-3. 5V step-up - this part of the circuit boosts the 3.7V of the LiPo battery to 5V so that it can be fed into the Nano 33's VIN pin. The 33µF capacitor is used here to provide some smoothing when the toggle switch is turned on.
-4. LiPo charger - this charges the LiPo battery whilst also providing 3.7V from the battery to the 5V step-up. Note that the orientation of the ports should be the same direction as the Nano 33's micro-usb port. This was done for ease of maintenance
+- LiDAR sensors - these should be attached using JST-SH cables can for ease of maintenance and disassembly. However, if you wish, they can also be connected with solder joints. Ensure that the four individal lines of the JST-SH connection are connected to the appropriate pins of the Nano 33 MCU (3v, ground, I2C - SDA & SCL). The green lines in the breadboard diagram denote the LPn connections, and these MUST be connected to the MCU at the appropriate pins to allow for the individual I2C addresses for each sensor to be assigned correctly.
+- Tactile button - this is connected using a standard click button circuit (https://docs.arduino.cc/built-in-examples/digital/Button/) to receive a signal when the button is pressed. The 10kΩ resistor is used here
+- 5V step-up - this part of the circuit boosts the 3.7V of the LiPo battery to 5V so that it can be fed into the Nano 33's VIN pin. The 33µF capacitor is used here to provide some smoothing when the toggle switch is turned on.
+- LiPo charger - this charges the LiPo battery whilst also providing 3.7V from the battery to the 5V step-up. Note that the orientation of the ports should be the same direction as the Nano 33's micro-usb port. This was done for ease of maintenance
 
 The following real images can also be used as a reference in the protoboard construction:
 <img width="600" alt="protoboard" src="https://github.com/user-attachments/assets/cdb39e1e-ae4c-45c8-98e2-f6d8b0c20d3b" />
@@ -62,6 +62,9 @@ The following real images can also be used as a reference in the protoboard cons
 *Protoboard fully connected to components and placed in enclosure*
 
 ### Software
+The Arduino C++ code for the device is provided in the following folders:
+- ```Arduino/DistanceArray_main``` - Push this version to the Nano 33 for the initial device that uses the manual tactile button to trigger the LiDAR sensors to take a sample
+- ```Arduino/DistanceArray_ai``` - Push this version to the Nano 33 for the later device that uses gesture recognition (a double tap of the walking stick) to trigger the LiDAR sensors to take a sample
 
 ### Enclosure
 
