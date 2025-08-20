@@ -187,7 +187,7 @@ The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) me
 
 <img width="600" alt="Screenshot 2025-08-10 201159" src="https://github.com/user-attachments/assets/7b2805a5-7fc5-4cd2-86aa-759692a3857f" />
 
-*Diagram illustraing the CSA method, taken from [Olive and Marion (2007)](https://www-sciencedirect-com.libproxy.ucl.ac.uk/science/article/pii/S0301479708002867)*
+*Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](references)*
 
 ## Future Work
 A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the pojrect might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
@@ -196,6 +196,10 @@ A PCB design was developed towards the end of the project, but this was not manu
 <img width="400" alt="Screenshot 2025-08-18 151558" src="https://github.com/user-attachments/assets/5d66ea2f-5f79-4d3f-b1fe-7517f5599325" />
 
 *PCB design schematic (left) and 3D model (right)*
+
+It may also be possible to upgrade the sensors, which during testing were found to be less accurate than desired. The VL53L8CX, an improved model that is more able to cope with environmental factors such as high ambient light, is just starting to become more widely available.
+
+Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)](references).
 
 ## External Links
 
@@ -209,3 +213,9 @@ https://www.st.com/resource/en/datasheet/vl53l5cx.pdf
 
 ### Edge Impulse Project
 https://studio.edgeimpulse.com/public/732758/live
+
+## References
+
+Asphalt Industry Alliance. (2024). Annual Local Authority Road Maintenance Survey Report. 2024.
+
+Olive, N. D. and Marion, J. L. (2009). ‘The influence of use-related, environmental, and managerial factors on soil loss from recreational trails’. Journal of Environmental Management, 90 (3), pp. 1483–1493. doi: 10.1016/j.jenvman.2008.10.004.
