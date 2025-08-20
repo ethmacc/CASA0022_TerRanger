@@ -258,7 +258,7 @@ A PCB design was developed towards the end of the project, but this was not manu
 
 It may also be possible to upgrade the sensors, which during testing were found to be less accurate than desired. The VL53L8CX, an improved model that is more able to cope with environmental factors such as high ambient light, is just starting to become more widely available.
 
-Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)].(#references).
+Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)](#references).
 
 ## External Links
 
@@ -278,3 +278,6 @@ https://studio.edgeimpulse.com/public/732758/live
 Asphalt Industry Alliance. (2024). Annual Local Authority Road Maintenance Survey Report. 2024.
 
 Olive, N. D. and Marion, J. L. (2009). ‘The influence of use-related, environmental, and managerial factors on soil loss from recreational trails’. Journal of Environmental Management, 90 (3), pp. 1483–1493. doi: 10.1016/j.jenvman.2008.10.004.
+
+## Contact
+If you have any suggestions or would like to contribute to this project, please submit a pull request and/or contact me using my social links on my profile
