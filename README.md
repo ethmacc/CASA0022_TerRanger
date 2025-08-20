@@ -111,11 +111,36 @@ This section is intended for advanced makers to provide further details on the T
 
 *Two VL53L5CX sensors attached to the circuit*
 
-The VL53L5CX sensors can be tuned to change their sampling frequency, distance array size (4x4 or 8x8) and ranging mode (continuous or autonomous), which will have effects on device performance. This can be done by calling the appropriate functions from the imported Sparkfun library in the main Arduino code, that correspond to functions within the sensor firmware (see the Sparkfun VL53L5CX library and VL53L5CX datasheet and manual under [External Links](#External-links))
+The VL53L5CX sensors can be tuned to change their sampling frequency, distance array size and ranging mode, which will have effects on device performance. This can be done by calling the appropriate functions from the imported Sparkfun library in the main Arduino code, for example:
+
+- ```SparkFun_VL53L5CX.setResolution()``` to change resolution between 4x4 and 8x8
+- ```SparkFun_VL53L5CX.setRangingMode()``` to set ranging mode. It is possible to select either continuous or autonomous. Continuous uses more power but is more frequent.
+- ```SparkFun_VL53L5CX..setRangingFrequency()``` to set ranging frequency in continous mode. This has been set to the maximum of 60Hz in the code, to minimize lag time.
+
+For more information, see the Sparkfun VL53L5CX library and VL53L5CX datasheet and manual under [External Links](#External-links))
 
 ### Edge AI model
 
+If you elect to use the gesture recognition version of the Arduino code in ```Arduino/DistanceArray_ai/```, you will find that it uses a TinyML or Edge AI model to power the gesture recognition functionality. The model embedded in the code as a library is a Convolutional Neural Network (CNN), that has been trained on accelerometer data from performing the gesture of double tapping the hiking stick on the ground.
+
+<img width="600" alt="Screenshot 2025-08-11 201327" src="https://github.com/user-attachments/assets/603c5bcd-c2dc-4ed6-b4d5-eb4694a80e91" />
+
+*Model architecture of the CNN used for gesture recognition in the DistanceArray_ai.ino file*
+
+Other architectures tested included a Recurrent Neural Network (using Long Short Term Memory layers) and a hybrid model with both LSTM and Convolutional layers. The CNN model outperformed the other two architectures by far.
+
+<img width="1000" alt="Screenshot 2025-08-11 203729" src="https://github.com/user-attachments/assets/18e6ec53-cf07-48b4-81df-d691cc250ef5" />
+
+*Comparison of performance across different model architectures*
+
+Using Edge Impulse, it is possible to clone the project and train it on your own data or make further adjustments to the model. To visit the Edge Impulse project page, see [External Links](#External-links))
+
 ### Mobile Application
+
+If you wish to develop the mobile application further, first clone this entire repository with:
+```git clone https://github.com/ethmacc/CASA0022_TerRanger/```
+
+
 
 ## Future Work
 
