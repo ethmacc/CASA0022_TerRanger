@@ -9,8 +9,10 @@
 9. [External Links](#External-links)
 
 ## Introduction
+### Demo Film
 [![TerRanger Demo Film](https://img.youtube.com/vi/eogr--X4ssc/0.jpg)](https://www.youtube.com/watch?v=eogr--X4ssc)
 
+### What is TerRanger?
 This repository contains the code and 3D models required to build the TerRanger Smart Walking Stick, my dissertation project for the MSc Connected Environments course. The TerRanger system consists of 2 key components: the smart walking stick device and a mobile application that pairs with it using Bluetooth Low Energy (BLE). TerRanger uses two STMicroelectronics VL53L5CX tiny LiDAR sensors to map out the terrain below the hiking stick. This data is then translated into point-cloud form and visualized on the mobile application. TerRanger utilises the terrain surface data to estimate erosion along hiking paths, and is essentially a feasibility study to show that trail erosion monitoring can be semi-automated using embedded, low-cost technology.
 
 ## Materials
