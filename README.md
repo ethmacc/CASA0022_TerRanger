@@ -223,7 +223,7 @@ The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) me
 *Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](#references)*
 
 ## Future Work
-A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the pojrect might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
+A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the project might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
 
 <img width="400" alt="Screenshot 2025-08-18 151321" src="https://github.com/user-attachments/assets/3983a2cd-4c11-4adc-b175-80f2d3d4c0ac" />
 <img width="400" alt="Screenshot 2025-08-18 151558" src="https://github.com/user-attachments/assets/5d66ea2f-5f79-4d3f-b1fe-7517f5599325" />
