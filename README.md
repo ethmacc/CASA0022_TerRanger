@@ -138,9 +138,17 @@ Using Edge Impulse, it is possible to clone the project and train it on your own
 ### Mobile Application
 
 If you wish to develop the mobile application further, first clone this entire repository with:
+
 ```git clone https://github.com/ethmacc/CASA0022_TerRanger/```
 
+After which, run the following command to fix and issues in the code and install dependencies (using the ```pubspec.yaml``` file in application root folder):
 
+```flutter clean```
+
+```flutter pub get```
+
+The following libraries have been used in the code:
+- [flutter_reactive_ble](https://pub.dev/packages/flutter_reactive_ble)
 
 ## Future Work
 
