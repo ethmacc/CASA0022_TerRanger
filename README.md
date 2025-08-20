@@ -187,7 +187,7 @@ The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) me
 
 <img width="600" alt="Screenshot 2025-08-10 201159" src="https://github.com/user-attachments/assets/7b2805a5-7fc5-4cd2-86aa-759692a3857f" />
 
-*Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](references)*
+*Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](#references)*
 
 ## Future Work
 A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the pojrect might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components
@@ -199,7 +199,7 @@ A PCB design was developed towards the end of the project, but this was not manu
 
 It may also be possible to upgrade the sensors, which during testing were found to be less accurate than desired. The VL53L8CX, an improved model that is more able to cope with environmental factors such as high ambient light, is just starting to become more widely available.
 
-Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)](references).
+Lastly, it would be an interesting exercise to try adapting the device to another use case, such as surveying for potholes. Pothole damage repair costs the UK approximately £143.5 million annually [(Asphalt Industry Alliance, 2024)](#references).
 
 ## External Links
 
