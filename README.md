@@ -253,7 +253,7 @@ The distance array (from the VL53L5CX sensors) to point-cloud algorithm is based
 *The vector list visualised as a vector field using plotly in the Python notebook*
 
 The vector list has been copied and hardcoded into ```smarthiking_app/lib/screens/sample_detail.dart``` and is used in the function
-```flutter
+```dart
 List<List> parseAndScalePts(String rawData) {...}
 ```
 to generate the point cloud from the distance array received from the sensors.
@@ -265,7 +265,7 @@ The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) me
 *Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](#references)*
 
 This is implemented in ```smarthiking_app/lib/screens/sample_detail.dart``` in the function:
-```flutter
+```dart
 double calcErosion (List<List> sectionLists) {...}
 ```
 
