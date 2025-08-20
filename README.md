@@ -71,7 +71,7 @@ The following real images can also be used as a reference in the protoboard cons
 
 *Protoboard fully connected to components and placed in enclosure*
 
-The current draw of the circuit was measured and found to be 0.25A, giving the device an approximate endurance of about 8 hours.
+The device has an approximate endurance of about 8 hours, based on current draw of the circuit as measured below (0.25A).
 
 <img width="600" alt="Circuit current draw as measured with a multimeter" src="https://github.com/user-attachments/assets/5cad3d94-8ff0-43e1-9025-71304b37412d" />
 
