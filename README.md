@@ -214,7 +214,7 @@ If you wish to develop the mobile application further, first clone this entire r
 
 After which, run the following command to fix and issues in the code and install dependencies (using the ```pubspec.yaml``` file in application root folder):
 
-```windows
+```powershell
 flutter clean
 
 flutter pub get
