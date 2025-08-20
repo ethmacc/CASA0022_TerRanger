@@ -10,6 +10,7 @@
 8. [Future Work](#future-work)
 9. [External Links](#External-links)
 10. [References](#References)
+11. [Contact](#Contact)
 
 ## Introduction
 ### Demo Film
