@@ -103,7 +103,7 @@ The Fusion360 model can also be used as a reference to attach the electronics in
 
 If you wish, and have access to a UV printer, you can apply the decals found in ```Models/2D``` to the front face of the enclosure.
 
-<img width="400" src="https://github.com/user-attachments/assets/8a355c9d-950b-4f27-9611-4290d88495a3" />
+<img width="600" src="https://github.com/user-attachments/assets/8a355c9d-950b-4f27-9611-4290d88495a3" />
 
 *Developing the UV print design*
 
