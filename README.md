@@ -105,7 +105,13 @@ Once the device has been assembled and the mobile application installed on your 
 
 This section is intended for advanced makers to provide further details on the TerRanger system and how these can be modified.
 
-### Sensor Tuning
+### Software / Sensor Tuning
+
+<img width="600" alt="Image of two VL53L5CX sensors attached to the circuit" src="https://github.com/user-attachments/assets/2b81c369-8711-43cd-92a5-43577d9bcf48" />
+
+*Two VL53L5CX sensors attached to the circuit*
+
+The VL53L5CX sensors can be tuned to change their sampling frequency, distance array size (4x4 or 8x8) and ranging mode (continuous or autonomous), which will have effects on device performance. This can be done by calling the appropriate functions from the imported Sparkfun library in the main Arduino code, that correspond to functions within the sensor firmware (see the Sparkfun VL53L5CX library and VL53L5CX datasheet and manual under [External Links](#External-links))
 
 ### Edge AI model
 
@@ -114,5 +120,14 @@ This section is intended for advanced makers to provide further details on the T
 ## Future Work
 
 ## External Links
+
+### Sparkfun VL53L5CX library
+https://github.com/sparkfun/SparkFun_VL53L5CX_Arduino_Library
+
+### VL53L5CX manual & datasheet
+https://www.st.com/resource/en/user_manual/um2884-a-guide-to-using-the-vl53l5cx-multizone-timeofflight-ranging-sensor-with-a-wide-field-of-view-ultra-lite-driver-uld-stmicroelectronics.pdf
+
+https://www.st.com/resource/en/datasheet/vl53l5cx.pdf
+
 ### Edge Impulse Project
 https://studio.edgeimpulse.com/public/732758/live
