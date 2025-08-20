@@ -117,11 +117,14 @@ This section is intended for advanced makers to provide further details on the T
 #### Dependencies
 
 The following key libraries were used in the Arduino code:
-- [vector](https://docs.arduino.cc/libraries/vector/) - used for [Gyroscopic compensation](Gyroscopic-compensation)
-- [Wire](https://docs.arduino.cc/language-reference/en/functions/communication/wire/) - required for I2C communication between the LiDAR sensors and the MCU
-- [SparkFun_VL53L5CX_Library](https://docs.arduino.cc/libraries/sparkfun-vl53l5cx-arduino-library/) - required to interface with the firmware for the VL53L5CX
-- [ArduinoBLE](https://docs.arduino.cc/libraries/arduinoble/) - used to set a device name and create a BLE characteristic that the data from the sensors can be written to
-- [Arduino_LSM9DS1](https://docs.arduino.cc/libraries/arduino_lsm9ds1/) - to interface with the LSM9DS1 IMU, used for [Gyroscopic compensation](Gyroscopic-compensation)
+
+| **Library**       | **Purpose**                                |
+|-----------------------|--------------------------------------------|
+| [vector](https://docs.arduino.cc/libraries/vector/) | Used for [Gyroscopic compensation](Gyroscopic-compensation) |
+| [Wire](https://docs.arduino.cc/language-reference/en/functions/communication/wire/) | Required for I2C communication between the LiDAR sensors and the MCU |
+| [SparkFun_VL53L5CX_Library](https://docs.arduino.cc/libraries/sparkfun-vl53l5cx-arduino-library/) | Required to interface with the firmware for the VL53L5CX |
+| [ArduinoBLE](https://docs.arduino.cc/libraries/arduinoble/) | Used to set a device name and create a BLE characteristic that the data from the sensors can be written to |
+| [Arduino_LSM9DS1](https://docs.arduino.cc/libraries/arduino_lsm9ds1/) | To interface with the LSM9DS1 IMU, used for [Gyroscopic compensation](Gyroscopic-compensation) |
 
 #### Sensor tuning
 
@@ -131,9 +134,11 @@ The following key libraries were used in the Arduino code:
 
 The VL53L5CX sensors can be tuned to change their sampling frequency, distance array size and ranging mode, which will have effects on device performance. This can be done by calling the appropriate functions from the imported Sparkfun library in the main Arduino code, for example:
 
-- ```SparkFun_VL53L5CX.setResolution()``` to change resolution between 4x4 and 8x8
-- ```SparkFun_VL53L5CX.setRangingMode()``` to set ranging mode. It is possible to select either continuous or autonomous. Continuous uses more power but is more frequent.
-- ```SparkFun_VL53L5CX..setRangingFrequency()``` to set ranging frequency in continous mode. This has been set to the maximum of 60Hz in the code, to minimize lag time.
+| **Function**       | **Use**                                |
+|-----------------------|--------------------------------------------|
+| `SparkFun_VL53L5CX.setResolution()` | To change distance array size between 4x4 and 8x8 |
+| `SparkFun_VL53L5CX.setRangingMode()` | To set ranging mode. It is possible to select either continuous or autonomous. Continuous uses more power but is more frequent |
+| `SparkFun_VL53L5CX..setRangingFrequency()` | To set ranging frequency in continous mode. This has been set to the maximum of 60Hz in the code, to minimize lag time |
 
 For more information, see the Sparkfun VL53L5CX library GitHub repo and VL53L5CX datasheet and manual under [External Links](#External-links))
 
@@ -162,14 +167,17 @@ Using Edge Impulse, it is possible to clone the project and train it on your own
 #### Dependencies
 
 The key libraries that have been used in the code are:
-- [flutter_reactive_ble](https://pub.dev/packages/flutter_reactive_ble) - for establishing the Bluetooth Low Energy connection to the device
-- [permission_handler](https://pub.dev/packages/permission_handler) - for handling location and Bluetooth permissions
-- [provider](https://pub.dev/packages/provider) - to provide [app state management](https://docs.flutter.dev/get-started/fundamentals/state-management)
-- [sqflite](https://pub.dev/packages/sqflite) - to persist data in the background in the form of a SQL database
-- [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) - to display a map widget 
-- [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) - to get the position of the user when a sample is taken
-- [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditred](https://pub.dev/packages/ditredi) - To manipulate and visualize the data from the sensors
-- [share_plus](https://pub.dev/packages/share_plus) - to provide backup functionality for the local SQL database where the data is stored
+
+| **Library**       | **Purpose**                                |
+|-----------------------|--------------------------------------------|
+| [flutter_reactive_ble](https://pub.dev/packages/flutter_reactive_ble) | For establishing the Bluetooth Low Energy connection to the device |
+| [permission_handler](https://pub.dev/packages/permission_handler) | For handling location and Bluetooth permissions |
+| [provider](https://pub.dev/packages/provider) | To provide [app state management](https://docs.flutter.dev/get-started/fundamentals/state-management) |
+| [sqflite](https://pub.dev/packages/sqflite) | To persist data in the background in the form of a SQL database |
+| [flutter_map](https://pub.dev/packages/flutter_map) & [flutter_map_location_marker](https://pub.dev/packages/flutter_map_location_marker) | to display a map widget |
+| [latlong2](https://pub.dev/packages/latlong2) & [geolocator](https://pub.dev/packages/geolocator) | to get the position of the user when a sample is taken |
+| [fl_chart](https://pub.dev/packages/fl_chart), [vector_math](https://pub.dev/packages/vector_math) & [ditred](https://pub.dev/packages/ditredi) | To manipulate and visualize the data from the sensors |
+| [share_plus](https://pub.dev/packages/share_plus) | to provide backup functionality for the local SQL database where the data is stored |
 
 #### Developer setup
 
