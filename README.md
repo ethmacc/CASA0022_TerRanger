@@ -214,9 +214,11 @@ If you wish to develop the mobile application further, first clone this entire r
 
 After which, run the following command to fix and issues in the code and install dependencies (using the ```pubspec.yaml``` file in application root folder):
 
-```flutter clean```
+```windows
+flutter clean
 
-```flutter pub get```
+flutter pub get
+```
 
 To run the application in a connected Android Device or Emulator, use:
 
