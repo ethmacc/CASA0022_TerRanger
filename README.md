@@ -176,6 +176,24 @@ After which, run the following command to fix and issues in the code and install
 
 ```flutter pub get```
 
+To run the application in a connected Android Device or Emulator, use:
+
+```flutter run```
+
+The application can be built into and apk and installed using the following commands:
+
+```flutter build apk```
+
+```flutter install```
+
+Note that if you want to push an upgrade to an existing version on your Android device without overwriting the existing data collected, you should use:
+
+```adb install -r "smarthiking_app\build\app\outputs\apk\release\app-release.apk"```
+
+instead of ```flutter install```
+
+If you wish to load data from the 3 hikes that were conducting during the course of this project, find them in the folder ```Data/database_backups/``` and load them into your app by using the function on the backups screen.
+
 #### Algorithms
 The distance array (from the VL53L5CX sensors) to point-cloud algorithm is based on scaling a list of vectors that point to each of the grid points in the sensor's field of view. This was tested and visualised initially in the Python notebooks  ```/Data/byte_decoder.ipynb``` and ```/Data/byte_decoder_4x4.ipynb```, which can also be used for further development.
 
