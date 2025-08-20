@@ -210,7 +210,9 @@ The key libraries that have been used in the code are:
 
 If you wish to develop the mobile application further, first clone this entire repository with:
 
-```git clone https://github.com/ethmacc/CASA0022_TerRanger/```
+```powershell
+git clone https://github.com/ethmacc/CASA0022_TerRanger/
+```
 
 After which, run the following command to fix and issues in the code and install dependencies (using the ```pubspec.yaml``` file in application root folder):
 
@@ -222,17 +224,22 @@ flutter pub get
 
 To run the application in a connected Android Device or Emulator, use:
 
-```flutter run```
+```powershell
+flutter run
+```
 
 The application can be built into and apk and installed using the following commands:
 
-```flutter build apk```
-
-```flutter install```
+```powershell
+flutter build apk
+flutter install
+```
 
 Note that if you want to push an upgrade to an existing version on your Android device without overwriting the existing data collected, you should use:
 
-```adb install -r "smarthiking_app\build\app\outputs\apk\release\app-release.apk"```
+```powershell
+adb install -r "smarthiking_app\build\app\outputs\apk\release\app-release.apk"
+```
 
 instead of ```flutter install```
 
@@ -245,11 +252,22 @@ The distance array (from the VL53L5CX sensors) to point-cloud algorithm is based
 
 *The vector list visualised as a vector field using plotly in the Python notebook*
 
-The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) method and formula:
+The vector list has been copied and hardcoded into ```smarthiking_app/lib/screens/sample_detail.dart``` and is used in the function
+```flutter
+List<List> parseAndScalePts(String rawData) {...}
+```
+to generate the point cloud from the distance array received from the sensors.
+
+The erosion estimation algorthim is based on the Cross-Section Analysis (CSA) method and formula as described in [Olive and Marion (2009)](#references):
 
 <img width="600" alt="Screenshot 2025-08-10 201159" src="https://github.com/user-attachments/assets/7b2805a5-7fc5-4cd2-86aa-759692a3857f" />
 
 *Diagram illustraing the CSA method, taken from [Olive and Marion (2009)](#references)*
+
+This is implemented in ```smarthiking_app/lib/screens/sample_detail.dart``` in the function:
+```flutter
+double calcErosion (List<List> sectionLists) {...}
+```
 
 ## Future Work
 A PCB design was developed towards the end of the project, but this was not manufactured or tested. It can be found in ```Models/2D```. A future version of the project might involve miniaturising the device further, taking and advantage of the reduced size of the electronics with a dedicated PCB and surface mount-components.
