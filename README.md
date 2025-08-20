@@ -1,2 +1,2 @@
 # CASA0022_SmartWalkingStick
-Repository for CASA0022 Dissertation project
+This branch contains some additional code and models to adapt the device for display at the MSc Connected Environments Degree Show held from 17 July 2025 to 3 August 2025
