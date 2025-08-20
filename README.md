@@ -85,9 +85,9 @@ The Mobile Application was designed initially in Figma and then realised with Fl
 
 *Wireframe for the TerRanger Mobile Application, designed in Figma*
 
-<img width="200" alt="Screenshot 2025-08-13 164600" src="https://github.com/user-attachments/assets/f064c82d-8903-4259-af2f-b1d3c356eba8" /> &nbsp;
-<img width="200" alt="Screenshot 2025-08-13 164605" src="https://github.com/user-attachments/assets/aa5b445b-dbc4-4c28-bce1-0adc0effe092" /> &nbsp;
-<img width="200" alt="Screenshot 2025-08-13 164627" src="https://github.com/user-attachments/assets/b53b6430-7c2b-4594-8593-f64f74385ce9" /> &nbsp;
+<img width="200" alt="Screenshot 2025-08-13 164600" src="https://github.com/user-attachments/assets/f064c82d-8903-4259-af2f-b1d3c356eba8" />
+<img width="200" alt="Screenshot 2025-08-13 164605" src="https://github.com/user-attachments/assets/aa5b445b-dbc4-4c28-bce1-0adc0effe092" />
+<img width="200" alt="Screenshot 2025-08-13 164627" src="https://github.com/user-attachments/assets/b53b6430-7c2b-4594-8593-f64f74385ce9" />
 <img width="200" height="942" alt="Screenshot 2025-08-13 164633" src="https://github.com/user-attachments/assets/67adcd6c-f419-46c1-b9c3-cb372dc31729" />
 
 *Screens from the finished Flutter build*
