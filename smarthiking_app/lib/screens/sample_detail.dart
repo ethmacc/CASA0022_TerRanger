@@ -80,6 +80,7 @@ class _SampleDetailState extends State<SampleDetail> {
   }
   
   List<List> parseAndScalePts(String rawData) {
+    debugPrint('$rawData');
     List<int> dataList = json.decode(rawData).cast<int>().toList();
     List<vmath.Vector3> scaledList = [];
     List<List> pointList = [];
