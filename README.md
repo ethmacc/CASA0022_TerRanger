@@ -67,6 +67,7 @@ The Arduino C++ code for the device is provided in the following folders:
 - ```Arduino/DistanceArray_ai``` - Push this version to the Nano 33 for the later device that uses gesture recognition (a double tap of the walking stick) to trigger the LiDAR sensors to take a sample
 
 ### Enclosure
+The enclosure can be simply printed from the 
 
 ### Mobile Application
 
