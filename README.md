@@ -92,7 +92,7 @@ The enclosure can be printed by exporting the various components from the Fusion
 The Fusion360 model can also be used as a reference to attach the electronics inside the enclosure correctly. The 2000mAh LiPo battery should be placed behind the protoboard, and can be pushed into place with a felt ribbon to make removing it easier:
 
 <img width="400" src="https://github.com/user-attachments/assets/c41aa2ca-3e7c-4300-93bd-31c641a8a613" />
-<img width="400" src="https://github.com/user-attachments/assets/9f265dde-88ad-4963-b412-de7a03ded52" />
+<img width="400" src="https://github.com/user-attachments/assets/9f265dde-88ad-4963-b412-de7a03ded52d" />
 
 *Removing the battery from the device with a felt ribbon*
 
