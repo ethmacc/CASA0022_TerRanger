@@ -235,7 +235,7 @@ flutter build apk
 flutter install
 ```
 
-Note that if you want to push an upgrade to an existing version on your Android device without overwriting the existing data collected, you should use:
+Note that if you want to push an upgrade to an existing version of the application on your Android device without overwriting the existing data collected, you should use:
 
 ```powershell
 adb install -r "smarthiking_app\build\app\outputs\apk\release\app-release.apk"
@@ -243,7 +243,7 @@ adb install -r "smarthiking_app\build\app\outputs\apk\release\app-release.apk"
 
 instead of ```flutter install```
 
-If you wish to load data from the 3 hikes that were conducting during the course of this project, find them in the folder ```Data/database_backups/``` and load them into your app by using the function on the backups screen.
+If you wish to load data from the 3 hikes that were conducted during the course of this project, find them in the folder ```Data/database_backups/``` and load them into your app by using the load backup function on the backups screen.
 
 #### Algorithms
 The distance array (from the VL53L5CX sensors) to point-cloud algorithm is based on scaling a list of vectors that point to each of the grid points in the sensor's field of view. This was tested and visualised initially in the Python notebooks  ```/Data/byte_decoder.ipynb``` and ```/Data/byte_decoder_4x4.ipynb```, which can also be used for further development.
